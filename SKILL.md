@@ -1,6 +1,6 @@
 ---
 name: signal-newsletter-generator
-description: Generate the SIGNAL newsletter for Scalac. Use when the user asks to create a monthly newsletter, generate SIGNAL, or prepare the distributed systems newsletter. This skill searches for trending discussions, engineering blogs, and community news to produce a draft newsletter following The Code format with multiple short insights.
+description: Generate the SIGNAL newsletter for Scalac. Use when the user asks to create a monthly newsletter, generate SIGNAL, or prepare the distributed systems newsletter. This skill produces a strategic engineering newsletter combining The Code format (short, punchy) with deep architectural analysis (3 sections: Debate, Trenches, Signal).
 metadata:
   trigger: "monthly newsletter", "SIGNAL", "distributed systems newsletter", "create newsletter", "prepare newsletter draft"
   author: Scalac
@@ -9,147 +9,161 @@ metadata:
 
 # SIGNAL Newsletter Generator
 
-Generate a monthly B2B newsletter targeting CTO, VP of Engineering, and Chief Architect roles. The newsletter aggregates 4-6 significant signals from distributed systems communities and provides expert analysis in The Code format.
+Generate a monthly B2B newsletter targeting CTO, VP of Engineering, and Chief Architect roles. The newsletter combines The Code format (short, punchy, metric-driven) with strategic depth (3 sections: Debate, Trenches, Signal).
+
+## Newsletter Philosophy
+
+**Don't aggregate news. Aggregate lessons.**
+
+Senior engineers don't need library release notes. They need:
+- Architecture debates with real trade-offs
+- Production war stories with solutions  
+- 3 critical signals with business context
+
+**Scope:** Scala + JVM + Java + Rust + Kafka + Akka + Data Engineering + AI integration
 
 ## Workflow
 
 ### Step 1: Collect Signals from Multiple Sources
 
-Search these sources for trending discussions and news:
-
 **Primary Sources:**
-1. **r/scala** - Scala ecosystem, functional programming, JVM trends
-2. **r/rust** - Systems programming, performance, memory safety
-3. **r/apachekafka** - Streaming infrastructure, Kafka migrations, operational issues
-4. **r/dataengineering** - Data pipelines, infrastructure decisions, tool comparisons
-5. **InfoQ** - Enterprise architecture case studies
-6. **Hacker News** - Engineering discussions, Show HN projects
-7. **Engineering Blogs** - Reddit, Netflix, Uber, Confluent, etc.
+1. **r/scala** - Scala ecosystem, FP, JVM trends
+2. **r/rust** - Systems programming, performance, safety
+3. **r/apachekafka** - Streaming, migrations, ops
+4. **r/dataengineering** - Pipelines, architecture decisions
+5. **InfoQ** - Enterprise case studies
+6. **Hacker News** - Engineering discussions
+7. **Engineering Blogs** - Reddit, Netflix, Uber, Confluent, Lightbend/Akka
 
-**Focus areas:**
-- Migration stories (e.g., "we moved from X to Y")
-- Performance benchmarks with specific metrics
-- Cost optimization discussions with numbers
-- "Why we chose/switched to" posts
-- Production incidents and lessons learned
-- New tools/frameworks gaining traction
-- Funding/acquisitions in infrastructure space
+**What to look for:**
+- "Migrated from X to Y" with metrics
+- Post-mortems ("lessons learned", "incident report")
+- Architecture debates (50+ comments, controversy)
+- Cost reductions ("cut bill by 80%")
+- Breaking changes in core tools
+- AI integration in existing stacks
 
-Use web search to find recent high-engagement posts from these communities. Look for:
-- Posts with 50+ upvotes or 30+ comments
-- Published within last 30 days
-- Discussion in comments (not just link sharing)
-- Specific metrics ("20x improvement", "50% cost reduction")
+**What to SKIP (do NOT include):**
+- Event/conference announcements (CFPs, ticket sales) — these go to Scalendar
+- Minor library releases without architectural impact
+- Tutorial posts without production context
+- Vendor marketing without technical depth
 
-### Step 2: Select 4-6 Signals
+### Step 2: Select Content for 3 Sections
 
-Choose signals based on:
-- **Relevance**: Impacts infrastructure decisions
-- **Recency**: Discussed within last 30 days
-- **Depth**: Has enough substance for analysis
-- **Diversity**: Mix of migrations, benchmarks, incidents, announcements
-- **Tension**: Involves real trade-offs (cost vs latency, simplicity vs control)
+**SECTION 1: THE ARCHITECTURE DEBATE**
+- One hot topic with genuine controversy
+- Two sides of the argument with evidence
+- Technical + business implications
+- Examples: "Diskless Kafka vs latency", "Scala 3 migration vs LTS", "Rust rewrite vs incremental"
 
-Good signals show engineering teams making difficult decisions with measurable outcomes.
+**SECTION 2: NOTES FROM THE TRENCHES**
+- One concrete production problem
+- Specific context (scale, constraints)
+- Solution with code/commands
+- Lesson applicable to other teams
 
-### Step 3: Generate Newsletter Draft
+**SECTION 3: SIGNAL OVER NOISE**
+- Exactly 3 critical changes
+- Each with business/technical context
+- Skip trivial patch notes
+- Focus: breaking changes, deprecations, major shifts
 
-Write the newsletter following this exact structure:
+### Step 3: Generate Newsletter
 
 ```
 # SIGNAL
 ## What matters in distributed systems
 [Month] [Year] | Issue [N]
 
-**Welcome back.** [2-3 sentences summarizing the biggest stories. Hook the reader with the most surprising insight.]
+**Welcome back.** [2-3 sentences. Hook with the most surprising/debated insight. No throat-clearing.]
 
-**Also:** [2-3 bullet points teasing other stories in the issue]
+**Also:** [2 bullet points teasing other major stories]
 
 ---
 
 ### **Today's Insights**
 
-* [Bullet point 1]
-* [Bullet point 2]
-* [Bullet point 3]
-* [Bullet point 4]
+* [Bullet 1: Main debate topic]
+* [Bullet 2: Production lesson]
+* [Bullet 3: Critical change]
 
 ---
 
-##### **TODAY IN DISTRIBUTED SYSTEMS**
+##### **SECTION 1: THE ARCHITECTURE DEBATE**
 
-**[Bold headline]:** [One paragraph, 3-4 sentences. Lead with specific metrics. Link to source.] [Read more](URL)
+## **[Title of debate]**
 
-**[Bold headline]:** [Same format. Different story. Vary the topics - one migration, one cost story, one performance, one announcement.]
+[Setup: 2-3 sentences what sparked the debate and why it matters now.]
 
-**[Bold headline]:** [Continue for 4-5 stories total]
+**The Arguments For:**
+[2-3 sentences with specific evidence/metrics]
+
+**The Arguments Against:**
+[2-3 sentences with specific evidence/risks]
+
+**The Scalac Angle:**
+[2-3 sentences. Our expert take. Challenge both sides if needed. Concrete recommendation.]
 
 ---
 
-##### **INSIGHT**
+##### **SECTION 2: NOTES FROM THE TRENCHES**
 
-## **[Title of deep analysis]**
+## **[Title of production problem]**
 
-**[Setup the debate/trend.]** [2-3 sentences explaining why this matters now.]
+[Context: Scale, constraints, stakes. 2-3 sentences.]
 
-**[Argument A.]** [2-3 sentences presenting one side with evidence.]
+**The Problem:**
+[Specific symptoms, errors, metrics]
 
-**[Argument B.]** [2-3 sentences presenting counter-argument with evidence.]
+**The Solution:**
+[Step-by-step fix with code/commands if applicable]
 
-**[The synthesis.]** [2-3 sentences on what smart teams actually do.]
+**The Lesson:**
+[Why this matters beyond this specific case]
+
+---
+
+##### **SECTION 3: SIGNAL OVER NOISE**
+
+## **Three critical changes this month**
+
+**1. [Bold headline]:** [2-3 sentences. What changed + why it matters + migration path.]
+
+**2. [Bold headline]:** [Same format]
+
+**3. [Bold headline]:** [Same format]
 
 ---
 
 ##### **IN THE KNOW**
 
-## **What's trending on socials and engineering blogs**
+## **What's trending on X, HN, and engineering blogs**
 
-* **[Bold topic]:** [One sentence summary]. [Link or source]
-* **[Bold topic]:** [One sentence summary]. [Link or source]
-* **[Bold topic]:** [One sentence summary]. [Link or source]
-* **[Bold topic]:** [One sentence summary]. [Link or source]
-
----
-
-##### **AI CODING HACK** (or **DISTRIBUTED SYSTEMS HACK**)
-
-## **[Title of practical technique]**
-
-[Context: When would you use this? 1-2 sentences.]
-
-[The technique: Step-by-step or pattern description. Use code blocks if relevant.]
-
-[Why it works: 1-2 sentences on the principle behind it.]
+* **[Bold topic]:** [One sentence]. [Source: X/HN/Threads with engagement metric]
+* **[Bold topic]:** [One sentence]. [Source]
+* **[Bold topic]:** [One sentence]. [Source]
+* **[Bold topic]:** [One sentence]. [Source]
 
 ---
 
 ##### **TOP & TRENDING RESOURCES**
 
-### **Top Tutorial**
+### **Tutorial of the Month**
 
-**[Title](URL):** [One sentence describing what it teaches and who it's for.]
-
----
-
-### **Top Repo**
-
-**[Project Name](URL):** [One sentence on what it does and why it matters.]
+**[Title](URL):** [One sentence: what it teaches, who it's for, why it stands out.]
 
 ---
 
-### **Trending Paper**
+### **Repo of the Month**
 
-**[Paper Title](URL):** [One sentence on the insight and why practitioners should care.]
+**[Project Name](URL):** [One sentence: what it does, tech stack, why it matters now.]
 
 ---
 
-##### **SCALAC ANGLE**
+### **Paper of the Month**
 
-**On [First Story]:** [Expert opinion with specific, actionable insight - 2-3 sentences. Challenge vendor promises or highlight hidden complexity.]
-
-**On [Second Story]:** [Same format. Connect to real experience: "We see teams..." or "We witnessed similar patterns when..."]
-
-**On [Third Story]:** [Same format. Include concrete timeline or threshold when relevant.]
+**[Paper Title](URL):** [One sentence: the insight and practical implication.]
 
 ---
 
@@ -161,90 +175,68 @@ Signal is published by Scalac. We build distributed systems for teams who ship.
 
 ## Writing Rules (Stop-Slop)
 
-CRITICAL: Follow these rules to avoid AI-typical writing patterns:
-
 ### Banned Phrases
-- Throat-clearers: "Here's what you need to know", "In this article", "Let's dive in", "It's worth noting"
+- Throat-clearers: "Here's what you need to know", "In this article", "Let's dive in"
 - Emphasis crutches: "crucial", "critical", "essential", "key", "vital", "game-changer"
 - Business jargon: "leverage", "synergy", "ecosystem", "paradigm shift", "best practices"
-- All adverbs: especially "importantly", "significantly", "effectively", "efficiently"
+- All adverbs: "importantly", "significantly", "effectively", "efficiently"
 - Vague declaratives: "The reasons are structural", "The implications are significant"
 - Meta-commentary: "As mentioned earlier", "In conclusion", "To summarize"
 
 ### Structural Rules
-- **Active voice only**: Every sentence needs a human subject doing something
-- **No passive constructions**: Never "the decision was made" - instead "the team decided"
+- **Active voice only**: "The team migrated" not "The migration was completed"
+- **No passive constructions**
 - **No binary contrasts**: Never "not X, it's Y" - state Y directly
 - **No em-dashes**: Ever
-- **Varied rhythm**: Mix sentence lengths. Two items beat three. End paragraphs differently.
-- **Specific over vague**: Name the specific thing, not abstractions
-- **Lead with metrics**: Put numbers in the first sentence of each story
+- **Varied rhythm**: Mix sentence lengths. Two items beat three.
+- **Specific over vague**: "p99 dropped from 15s to 100ms" not "latency improved"
 
 ### Sentence-Level Rules
-- No Wh- sentence starters (What, Why, When, Where, Who) at paragraph openings
-- No lazy extremes: "every", "always", "never" doing vague work
-- Put the reader in the room: "You" beats "People", specifics beat abstractions
-- Cut quotables: If it sounds like a pull-quote, rewrite it
+- No Wh- starters (What, Why, When, Where, Who) at paragraph openings
+- No lazy extremes: "every", "always", "never"
+- Put the reader in the room: "You" beats "People"
 
 ## Section Guidelines
 
-### TODAY IN DISTRIBUTED SYSTEMS
-- 4-5 stories, each 3-4 sentences
-- Bold the headline (not a question)
-- Start with metrics: "p99 latency dropped 50%", "costs fell 80%", "1M lines/month"
-- End with [Read more](URL) link
-- Vary story types: migration, performance, cost, announcement, incident
+### SECTION 1: THE ARCHITECTURE DEBATE
+- Real controversy (not manufactured)
+- Both sides have valid points
+- End with Scalac Angle (expert synthesis)
+- Technical depth + business implications
 
-### INSIGHT
-- Pick ONE trend/debate from the stories
-- Present as "Some say X, others say Y, the reality is Z"
-- Avoid taking sides - show the trade-off
-- 3 short paragraphs: setup, debate, synthesis
+### SECTION 2: NOTES FROM THE TRENCHES  
+- Concrete problem (error messages, metrics)
+- Production context (scale, constraints)
+- Actionable solution
+- Transferable lesson
 
-### IN THE KNOW
-- 4-5 bullet points
-- Mix of social media trends, GitHub repos, conference talks
-- One sentence per item
-- Include view counts or engagement metrics when available
-
-### AI CODING HACK / DISTRIBUTED SYSTEMS HACK
-- Practical technique from one of the stories
-- Include specific commands, code, or process steps
-- Explain when to use it and when NOT to use it
-
-### TOP & TRENDING RESOURCES
-- Tutorial: Link to guide/case study with target audience
-- Repo: GitHub project with one-line description
-- Paper: Academic or technical paper with practical insight
-
-### SCALAC ANGLE
-- 3 separate takes on 3 different stories
-- Each 2-3 sentences max
-- Include "We see teams..." or "We witnessed..." or "Budget X months..."
-- Challenge vendor claims with realistic expectations
-- Offer concrete thresholds ("40% of timeline", "3-6 months")
+### SECTION 3: SIGNAL OVER NOISE
+- Exactly 3 items
+- Breaking changes, deprecations, major shifts only
+- Each: What + Why it matters + Migration path
+- Skip: minor features, patch releases, betas
 
 ## Quality Scoring
 
-Before finalizing, score 1-10 on each dimension (minimum 35/50 required):
+Score 1-10 (minimum 35/50 required):
 
 | Dimension | Question |
 |-----------|----------|
 | Directness | Statements or announcements? |
-| Rhythm | Varied or metronomic? |
-| Trust | Respects reader intelligence? |
-| Authenticity | Sounds human? |
+| Depth | War stories or release notes? |
+| Debate | Both sides represented? |
+| Actionable | Can reader act on this? |
 | Density | Anything cuttable? |
 
-## Output Format
+## Output
 
 Generate:
-1. **Newsletter draft** in Markdown (ready for review)
-2. **Signal sources** - brief list of URLs used
-3. **Skipped sources** - interesting but rejected signals (for your reference)
+1. **Newsletter draft** in Markdown
+2. **Sources used** - brief list
+3. **Skipped sources** - rejected signals (for reference)
 
 Do NOT:
-- Include external links in the newsletter body (except in [Read more] and Resources)
-- Reference specific Scalac case studies by name in body text
-- Add artificial endings ("End of newsletter")
-- Use em-dashes anywhere in the text
+- Include conference events (CFPs, ticket sales)
+- Add artificial endings
+- Use em-dashes
+- Reference Scalac case studies by name in body
