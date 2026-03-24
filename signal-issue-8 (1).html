@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SIGNAL — What matters in distributed systems</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Eczar:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #F5F4F0;
+      font-family: 'Source Serif 4', Georgia, serif;
+      color: #1A1A1A;
+      font-size: 16px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* PAGE WRAPPER */
+    .page {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 16px 60px;
+    }
+
+    /* TOP BAR */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #888;
+      border-bottom: 1px solid #D8D5CF;
+      margin-bottom: 0;
+    }
+
+    .topbar a {
+      color: #3593FF;
+      text-decoration: none;
+    }
+
+    .topbar a:hover {
+      text-decoration: underline;
+    }
+
+    /* HERO BANNER */
+    .hero-banner {
+      background: #0A0A0A;
+      padding: 28px 32px 24px;
+      margin-bottom: 0;
+      border-left: 4px solid #3593FF;
+    }
+
+    .hero-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #3593FF;
+      margin-bottom: 8px;
+    }
+
+    .hero-title {
+      font-family: 'Eczar', Georgia, serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.5px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .hero-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #666;
+      letter-spacing: 0.04em;
+    }
+
+    /* WELCOME BOX */
+    .welcome-box {
+      border: 1px solid #222;
+      border-top: 4px solid #222;
+      padding: 18px 18px 14px;
+      background: #fff;
+    }
+
+    .welcome-box p {
+      font-size: 15px;
+      line-height: 1.65;
+      color: #2D2D2D;
+      margin-bottom: 10px;
+    }
+
+    .welcome-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* INSIGHTS BOX */
+    .insights-box {
+      border: 1px solid #222;
+      border-top: 0;
+      padding: 14px 18px 16px;
+      background: #fff;
+    }
+
+    .insights-title {
+      font-family: 'Eczar', Georgia, serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #2A2A2A;
+      margin-bottom: 10px;
+    }
+
+    .insights-box ul {
+      list-style: disc;
+      padding-left: 20px;
+      color: #2D2D2D;
+    }
+
+    .insights-box ul li {
+      font-size: 14px;
+      line-height: 1.55;
+      margin-bottom: 5px;
+    }
+
+    /* DIVIDER */
+    .divider {
+      height: 1px;
+      background: #D8D5CF;
+      margin: 0;
+    }
+
+    .spacer {
+      height: 20px;
+    }
+
+    .spacer-sm {
+      height: 12px;
+    }
+
+    /* SECTION HEADER */
+    .section-header {
+      border-left: 3px solid #3593FF;
+      padding: 6px 0 6px 12px;
+      margin-bottom: 0;
+      background: #fff;
+      border-top: 1px solid #222;
+      border-right: 1px solid #222;
+      border-bottom: 0;
+    }
+
+    .section-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #3593FF;
+      font-weight: 600;
+    }
+
+    /* STORY CARD */
+    .story-card {
+      background: #fff;
+      border: 1px solid #222;
+      border-top: 0;
+      padding: 18px 18px 20px;
+    }
+
+    .story-card+.story-card {
+      border-top: 0;
+    }
+
+    .story-image {
+      width: calc(100% + 36px);
+      margin: 0 -18px 0 -18px;
+      display: block;
+      border-bottom: 1px solid #E8E5DF;
+    }
+
+    .story-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .story-image-caption {
+      font-size: 11px;
+      color: #888;
+      font-style: italic;
+      padding: 5px 18px 12px;
+      font-family: 'Source Serif 4', serif;
+    }
+
+    .story-h2 {
+      font-family: 'Eczar', Georgia, serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #1A1A1A;
+      line-height: 1.25;
+      margin-bottom: 12px;
+      margin-top: 14px;
+    }
+
+    .story-p {
+      font-size: 15px;
+      color: #2D2D2D;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .story-p:last-child {
+      margin-bottom: 0;
+    }
+
+    .story-p a {
+      color: #3593FF;
+      font-weight: 600;
+      text-decoration: underline;
+      text-decoration-color: #3593FF;
+    }
+
+    /* SUB-HEADING within story */
+    .sub-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-top: 16px;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    /* SCALAC ANGLE */
+    .angle-box {
+      border-left: 3px solid #3593FF;
+      background: #F0F7FF;
+      padding: 14px 16px;
+      margin-top: 16px;
+    }
+
+    .angle-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #3593FF;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .angle-box p {
+      font-size: 14px;
+      color: #1A3A5C;
+      line-height: 1.65;
+    }
+
+    /* NUMBERED LIST */
+    .story-card ol {
+      padding-left: 22px;
+      color: #2D2D2D;
+      margin: 10px 0;
+    }
+
+    .story-card ol li {
+      font-size: 15px;
+      line-height: 1.65;
+      margin-bottom: 6px;
+    }
+
+    .story-card ol li code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      background: #F1F0EC;
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: #D85A30;
+    }
+
+    /* SIGNAL OVER NOISE — numbered items */
+    .noise-item {
+      padding: 14px 0;
+      border-bottom: 1px solid #EBEBEB;
+    }
+
+    .noise-item:last-child {
+      border-bottom: 0;
+    }
+
+    .noise-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #3593FF;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .noise-title {
+      font-family: 'Eczar', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #1A1A1A;
+      margin-bottom: 5px;
+    }
+
+    .noise-body {
+      font-size: 14px;
+      color: #2D2D2D;
+      line-height: 1.6;
+    }
+
+    .noise-body code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      background: #F1F0EC;
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: #D85A30;
+    }
+
+    /* IN THE KNOW — bullet items */
+    .know-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #EBEBEB;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .know-item:last-child {
+      border-bottom: 0;
+    }
+
+    .know-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #3593FF;
+      margin-top: 7px;
+      flex-shrink: 0;
+    }
+
+    .know-content {
+      flex: 1;
+    }
+
+    .know-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: #1A1A1A;
+      display: inline;
+    }
+
+    .know-body {
+      font-size: 14px;
+      color: #2D2D2D;
+      line-height: 1.6;
+      display: inline;
+    }
+
+    .know-source {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #999;
+      margin-top: 4px;
+      display: block;
+    }
+
+    /* RESOURCES SECTION */
+    .resource-item {
+      padding: 14px 0;
+      border-bottom: 1px solid #EBEBEB;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .resource-item:last-child {
+      border-bottom: 0;
+    }
+
+    .resource-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      background: #0A0A0A;
+      color: #3593FF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      flex-shrink: 0;
+      letter-spacing: -0.5px;
+    }
+
+    .resource-type {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #999;
+      margin-bottom: 2px;
+    }
+
+    .resource-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1A1A1A;
+      margin-bottom: 3px;
+    }
+
+    .resource-title a {
+      color: #3593FF;
+      text-decoration: underline;
+    }
+
+    .resource-desc {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.55;
+    }
+
+    /* FOOTER */
+    .footer {
+      background: #0A0A0A;
+      padding: 24px 24px 20px;
+      margin-top: 0;
+    }
+
+    .footer p {
+      font-family: 'Source Serif 4', serif;
+      font-size: 13px;
+      color: #AAA;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .footer a {
+      color: #3593FF;
+      text-decoration: underline;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid #222;
+      padding-top: 12px;
+      margin-top: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #555;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* EMBED CARD (YouTube/Twitter style) */
+    .embed-card {
+      border: 1px solid #E0DDD8;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 14px 0;
+      background: #FAFAF8;
+    }
+
+    .embed-thumb {
+      width: 100%;
+      background: #1A1A1A;
+      position: relative;
+      aspect-ratio: 16/9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .embed-thumb-bg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.7;
+    }
+
+    .embed-play {
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      background: #FF0000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .embed-play svg {
+      margin-left: 3px;
+    }
+
+    .embed-meta {
+      padding: 10px 14px 12px;
+    }
+
+    .embed-source {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 3px;
+    }
+
+    .embed-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1A1A1A;
+      line-height: 1.4;
+    }
+
+    .embed-title a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .embed-title a:hover {
+      color: #3593FF;
+    }
+
+    /* LINK CARD */
+    .link-card {
+      border: 1px solid #E0DDD8;
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin: 12px 0;
+      background: #FAFAF8;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      text-decoration: none;
+    }
+
+    .link-card:hover {
+      border-color: #3593FF;
+    }
+
+    .link-card-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      background: #E8E5DF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .link-card-body {
+      flex: 1;
+    }
+
+    .link-card-source {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #999;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .link-card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1A1A1A;
+      line-height: 1.4;
+    }
+
+    .link-card-desc {
+      font-size: 12px;
+      color: #666;
+      margin-top: 3px;
+      line-height: 1.45;
+    }
+
+    bold {
+      font-weight: 700;
+    }
+
+    @media (max-width: 600px) {
+      .hero-title {
+        font-size: 28px;
+      }
+
+      .story-h2 {
+        font-size: 19px;
+      }
+
+      .hero-banner {
+        padding: 20px 18px;
+      }
+
+      .story-card,
+      .welcome-box,
+      .insights-box {
+        padding: 14px 14px;
+      }
+
+      .story-image {
+        width: calc(100% + 28px);
+        margin: 0 -14px 0 -14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <span>March 2026 &nbsp;·&nbsp; Issue #8</span>
+      <a href="#">Read online</a>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero-banner">
+      <div class="hero-label">Newsletter</div>
+      <div class="hero-title">SIGNAL</div>
+      <div class="hero-sub">What matters in distributed systems</div>
+    </div>
+
+    <!-- WELCOME -->
+    <div class="welcome-box">
+      <p><strong>Welcome back.</strong> Reddit engineers just proved you can migrate critical infrastructure without
+        downtime using "tap-compare" testing. Meanwhile, Scala 3.8 forces a hard choice: upgrade to JDK 17 or stay on
+        legacy LTS. And Microsoft claims AI will rewrite their entire codebase by 2030—engineers are skeptical.</p>
+      <p><strong>Also:</strong> Robinhood cut Kafka costs 80% by going diskless, and the debate over MCP vs direct APIs
+        splits the agent tooling world.</p>
+    </div>
+
+    <!-- INSIGHTS -->
+    <div class="insights-box">
+      <div class="insights-title">Today's Insights</div>
+      <ul>
+        <li>Reddit's tap-compare strategy makes language migrations safe</li>
+        <li>Scala 3.8 JDK requirement fractures the ecosystem</li>
+        <li>Microsoft's AI rewrite goals vs engineering reality</li>
+        <li>Stryker4s adds Unix sockets for faster mutation testing</li>
+      </ul>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SECTION 1: ARCHITECTURE DEBATE         -->
+    <!-- ═══════════════════════════════════════ -->
+
+    <div class="section-header">
+      <div class="section-tag">Section 1 · The Architecture Debate</div>
+    </div>
+
+    <div class="story-card">
+      <!-- Diagram image embed -->
+      <div class="story-image">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Apache_kafka.svg/1200px-Apache_kafka.svg.png"
+          alt="Diskless Kafka vs traditional broker architecture" onerror="this.parentElement.style.display='none'" />
+      </div>
+      <div class="story-image-caption">WarpStream's S3-backed architecture eliminates traditional Kafka brokers
+        entirely.</div>
+
+      <div class="story-h2">Diskless Kafka: Cost savior or latency trap?</div>
+
+      <p class="story-p">WarpStream's S3-backed Kafka (now Confluent) promises 80% cost reduction by eliminating
+        brokers. Robinhood runs 10+ TB/day of logs through it. The debate rages: is this the future of streaming or a
+        regression for latency-sensitive workloads?</p>
+
+      <div class="sub-label">The arguments for</div>
+      <p class="story-p">Object storage removes inter-AZ networking fees and broker management. Robinhood pays only for
+        actual usage, not provisioned capacity. WarpStream achieves sub-1s producer latency—acceptable for logs and
+        analytics. Stateless agents auto-scale without rebalancing partitions. For the 80% of workloads that tolerate
+        seconds of latency, the economics are compelling.</p>
+
+      <div class="sub-label">The arguments against</div>
+      <p class="story-p">S3 adds 100-500ms to read paths. Transactional event streaming requiring sub-50ms p99 latency
+        cannot tolerate this. Teams must split workloads: diskless for logs, traditional Kafka for transactions.
+        Operational complexity increases—you now manage two streaming systems. Vendor lock-in concerns persist with
+        proprietary control planes.</p>
+
+      <div class="angle-box">
+        <div class="angle-label">The Scalac Angle</div>
+        <p>The debate creates a false binary. Most teams don't need uniform latency across all workloads. We see
+          successful architectures routing logs to WarpStream (cost-optimized) and transactions to Redpanda or MSK
+          (latency-optimized). The real risk is delayed migration—teams waiting for "one solution" miss immediate cost
+          savings. Start with the 80% low-latency workload. Match architecture to latency budget, not marketing.</p>
+      </div>
+
+      <!-- Related video embed -->
+      <div class="embed-card">
+        <div class="embed-thumb"
+          style="aspect-ratio:16/9; background:#1A1A1A; padding: 24px; display:flex; align-items:center; justify-content: space-between;">
+          <div>
+            <div
+              style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#3593FF; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">
+              Confluent Blog</div>
+            <div style="font-size:14px; font-weight:600; color:#fff; line-height:1.4;">WarpStream is now part of
+              Confluent —<br>what changes for Kafka users?</div>
+          </div>
+          <div
+            style="width:44px;height:44px;border-radius:50%;border:2px solid #3593FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="#3593FF">
+              <polygon points="5,3 13,8 5,13" />
+            </svg>
+          </div>
+        </div>
+        <div class="embed-meta">
+          <div class="embed-source">confluent.io · Article</div>
+          <div class="embed-title"><a href="https://www.confluent.io/blog/warpstream-is-now-part-of-confluent/"
+              target="_blank">WarpStream joins Confluent: architecture deep dive and what it means for your Kafka
+              clusters</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SECTION 2: NOTES FROM THE TRENCHES     -->
+    <!-- ═══════════════════════════════════════ -->
+
+    <div class="section-header">
+      <div class="section-tag">Section 2 · Notes from the Trenches</div>
+    </div>
+
+    <div class="story-card">
+      <div class="story-h2">How Reddit validated 18 data paths without production risk</div>
+      <p class="story-p">Reddit migrated their comment backend from Python to Go. Comments handle the highest write
+        throughput of any core model. One mistake corrupts data for 50M+ daily users.</p>
+
+      <div class="sub-label">The problem</div>
+      <p class="story-p">Standard shadow traffic doesn't work for writes. Comment IDs must be unique—you cannot
+        double-write to production. Early attempts caused serialization mismatches: Go wrote data Python couldn't
+        deserialize. Database pressure spiked because Go wrote directly while Python used an ORM with hidden
+        optimizations.</p>
+
+      <div class="sub-label">The solution: sister datastores</div>
+      <p class="story-p">Reddit deployed "sister datastores"—isolated mirrors of PostgreSQL, Memcached, and Redis. The
+        validation flow:</p>
+
+      <ol>
+        <li>Route write to Go microservice</li>
+        <li>Go calls Python to perform actual production write (user sees result)</li>
+        <li>Go writes to isolated sister datastores</li>
+        <li>Compare production vs sister data across all three stores</li>
+        <li>Log discrepancies, fix, repeat</li>
+      </ol>
+
+      <p class="story-p" style="margin-top:10px;">This created 18 validation paths (3 endpoints × 3 datastores × 2
+        implementations) with zero risk to production data. CDC event consumers validated cross-language compatibility
+        by attempting to deserialize Go-written events in Python.</p>
+
+      <div class="angle-box">
+        <div class="angle-label">The Lesson</div>
+        <p>Language migrations require validation infrastructure, not just feature parity. Reddit spent 40% of the
+          migration timeline on discrepancy detection. Serialization is the hidden killer—different languages make
+          different defaults for byte ordering, null handling, numeric precision. Test round-trips before migrating a
+          single byte of production data.</p>
+      </div>
+
+      <!-- Link card to source -->
+      <a class="link-card" href="https://www.infoq.com/news/2025/11/reddit-comments-go-migration/" target="_blank">
+        <div class="link-card-icon">📄</div>
+        <div class="link-card-body">
+          <div class="link-card-source">InfoQ · Full writeup</div>
+          <div class="link-card-title">How Reddit Migrated Comments from Python to Go</div>
+          <div class="link-card-desc">Deep dive into tap-compare testing, sister datastores, and cross-language
+            serialization pitfalls.</div>
+        </div>
+      </a>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SECTION 3: SIGNAL OVER NOISE           -->
+    <!-- ═══════════════════════════════════════ -->
+
+    <div class="section-header">
+      <div class="section-tag">Section 3 · Signal over Noise</div>
+    </div>
+
+    <div class="story-card">
+      <div class="story-h2" style="margin-top:0;">Three critical changes this month</div>
+
+      <div class="noise-item">
+        <div class="noise-num">01 ·</div>
+        <div class="noise-title">Scala 3.8 requires JDK 17+</div>
+        <p class="noise-body">Starting with 3.8, Java 17 is the minimum. Scala 3.3 LTS continues supporting JDK 8, but
+          new features require 17. Teams face forced JVM upgrades. The <code>betterFors</code> feature also stabilizes,
+          changing for-comprehension desugaring—code returning <code>List</code> in 3.7 now returns <code>Map</code> in
+          certain cases. Migration: use <code>-source:3.7</code> temporarily or explicitly convert Maps to Iterable.</p>
+      </div>
+
+      <div class="noise-item">
+        <div class="noise-num">02 ·</div>
+        <div class="noise-title">Microsoft targets C/C++ elimination by 2030</div>
+        <p class="noise-body">Distinguished Engineer Galen Hunt announced plans to replace all C/C++ with Rust using
+          AI-assisted refactoring. Claim: "1 engineer, 1 month, 1 million lines." Reality check: Hunt clarified this is
+          research infrastructure, not an immediate Windows rewrite. Azure CTO Mark Russinovich confirmed the company is
+          "all-in" on memory safety. Engineering community remains skeptical—automated translation at this scale is
+          unproven.</p>
+      </div>
+
+      <div class="noise-item">
+        <div class="noise-num">03 ·</div>
+        <div class="noise-title">Akka pivots to agentic AI platform</div>
+        <p class="noise-body">Lightbend (now Akka) launched four new components: Orchestration, Agents (MCP tool
+          support), Memory (durable sharded state), and Streaming. Included in existing licenses. Positions against
+          LangChain/LlamaIndex with enterprise SLAs. Claims 3× velocity, ⅓ cost. Risk: BSL license continues pushing
+          users toward the Apache Pekko fork.</p>
+        <a class="link-card" href="https://akka.io" target="_blank" style="margin-top:10px;">
+          <div class="link-card-icon">🔗</div>
+          <div class="link-card-body">
+            <div class="link-card-source">akka.io · Announcement</div>
+            <div class="link-card-title">Akka agentic platform — full announcement</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- IN THE KNOW                            -->
+    <!-- ═══════════════════════════════════════ -->
+
+    <div class="section-header">
+      <div class="section-tag">In the Know · Trending on X, HN & blogs</div>
+    </div>
+
+    <div class="story-card">
+
+      <div class="know-item">
+        <div class="know-dot"></div>
+        <div class="know-content">
+          <span class="know-title">Stryker4s 0.20 drops: </span>
+          <span class="know-body">Mutation testing framework for Scala adds Unix socket support via FS2, claims
+            "slightly improved performance." Also adds Scala 3.8 dialect. Engineers on X debating whether mutation
+            testing is worth the CI time for functional codebases.</span>
+          <span class="know-source">X @stryker_mutator · 45 likes</span>
+        </div>
+      </div>
+
+      <div class="know-item">
+        <div class="know-dot"></div>
+        <div class="know-content">
+          <span class="know-title">Scala Survey 2026 closes end of March: </span>
+          <span class="know-body">VirtusLab collecting data on tooling preferences. Last year showed 92% Scala 3
+            adoption. This year's hot question: Cats Effect vs ZIO vs stdlib futures.</span>
+          <span class="know-source">contributors.scala-lang.org</span>
+        </div>
+      </div>
+
+      <div class="know-item">
+        <div class="know-dot"></div>
+        <div class="know-content">
+          <span class="know-title">Hacker News debates MCP backlash: </span>
+          <span class="know-body">Perplexity CTO revealed they're ditching MCP for direct APIs. Top HN comment: "MCP
+            solves enterprise auth/governance problems that CLI wrappers can't." 200+ comments.</span>
+
+          <!-- Twitter-style embed -->
+          <div class="embed-card" style="margin-top:10px;">
+            <div style="padding:14px 16px; background:#fff;">
+              <div style="display:flex; gap:10px; align-items:flex-start; margin-bottom:8px;">
+                <div
+                  style="width:36px;height:36px;border-radius:50%;background:#1A1A1A;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                  <span
+                    style="color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;">HN</span>
+                </div>
+                <div>
+                  <div style="font-weight:700;font-size:13px;color:#1A1A1A;">HN #34728910</div>
+                  <div style="font-size:12px;color:#888;">Hacker News · Top thread</div>
+                </div>
+              </div>
+              <div style="font-size:14px;color:#2D2D2D;line-height:1.55;">"MCP solves enterprise auth/governance
+                problems that CLI wrappers can't. The Perplexity move makes sense for their use case but is not
+                representative of the broader adoption pattern."</div>
+              <div style="font-size:12px;color:#888;margin-top:8px;font-family:'JetBrains Mono',monospace;">200+
+                comments · <a href="https://news.ycombinator.com" style="color:#3593FF;">Read on HN</a></div>
+            </div>
+          </div>
+
+          <span class="know-source">HN #34728910</span>
+        </div>
+      </div>
+
+      <div class="know-item">
+        <div class="know-dot"></div>
+        <div class="know-content">
+          <span class="know-title">"I haven't written code since December" — Andrej Karpathy: </span>
+          <span class="know-body">Former Tesla AI director says he now vibes code with LLMs. X thread sparked debate on
+            "post-coding era."</span>
+
+          <!-- X embed style -->
+          <div class="embed-card" style="margin-top:10px;">
+            <div style="padding:14px 16px; background:#fff;">
+              <div style="display:flex; gap:10px; align-items:flex-start; margin-bottom:8px;">
+                <div
+                  style="width:36px;height:36px;border-radius:50%;background:#0A0A0A;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;">
+                  𝕏</div>
+                <div>
+                  <div style="font-weight:700;font-size:13px;color:#1A1A1A;">Andrej Karpathy</div>
+                  <div style="font-size:12px;color:#888;">@karpathy</div>
+                </div>
+              </div>
+              <div style="font-size:14px;color:#2D2D2D;line-height:1.55;">I haven't written code since December.
+                Everything is vibes coding with LLMs now. Not sure whether to feel liberated or unemployed.</div>
+              <div style="font-size:12px;color:#888;margin-top:8px;font-family:'JetBrains Mono',monospace;">2.5M views ·
+                <a href="https://x.com/karpathy" style="color:#3593FF;">View on X</a></div>
+            </div>
+          </div>
+
+          <span class="know-source">X @karpathy · 2.5M views</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- RESOURCES                              -->
+    <!-- ═══════════════════════════════════════ -->
+
+    <div class="section-header">
+      <div class="section-tag">Top Resources · Tutorial · Repo · Paper</div>
+    </div>
+
+    <div class="story-card">
+
+      <div class="resource-item">
+        <div class="resource-icon">TUT</div>
+        <div>
+          <div class="resource-type">Tutorial of the month</div>
+          <div class="resource-title"><a href="https://www.infoq.com/news/2025/11/reddit-comments-go-migration/"
+              target="_blank">How Reddit Migrated Comments from Python to Go</a></div>
+          <div class="resource-desc">Deep dive into tap-compare testing, sister datastores, and cross-language
+            serialization pitfalls. Essential for any team planning language migrations.</div>
+        </div>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">GH</div>
+        <div>
+          <div class="resource-type">Repo of the month</div>
+          <div class="resource-title"><a href="https://github.com/stryker-mutator/stryker4s"
+              target="_blank">stryker-mutator / stryker4s</a></div>
+          <div class="resource-desc">Mutation testing for Scala. v0.20 adds Unix socket support, Scala 3.8 dialect, and
+            single-file HTML reports. Good for teams adding mutation testing to CI.</div>
+        </div>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">PDF</div>
+        <div>
+          <div class="resource-type">Paper of the month</div>
+          <div class="resource-title"><a href="https://arxiv.org/abs/2603.11808" target="_blank">Automating Skill
+              Acquisition of Agentic Repositories</a></div>
+          <div class="resource-desc">AI models struggle with complex tasks. Extracting skills from open-source code
+            improves learning efficiency by 40%. Relevant for teams building internal AI coding assistants.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <p><strong style="color:#fff;">Signal</strong> is published by <a href="https://scalac.io">Scalac</a>. We build
+        distributed systems for teams who ship.</p>
+      <p><strong style="color:#ccc;">Want deeper analysis?</strong> Explore our case studies at <a
+          href="https://scalac.io/case-studies">scalac.io/case-studies</a></p>
+      <p>Subscribe and receive Signal monthly at <a href="https://scalac.io/newsletter">scalac.io/newsletter</a></p>
+      <div class="footer-bottom">
+        <span>© 2026 Scalac</span>
+        <span>Unsubscribe · Manage preferences</span>
+      </div>
+    </div>
+
+  </div>
+</body>
+
+</html>

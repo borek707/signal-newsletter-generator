@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SIGNAL — What matters in distributed systems</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --scalac-red: #E74C3C;
+      --scalac-red-dark: #C0392B;
+      --scalac-dark: #13161C;
+      --scalac-dark-secondary: #1A1D26;
+      --scalac-gray: #2D313C;
+      --scalac-light: #F8F9FA;
+      --scalac-muted: #8B929D;
+      --scalac-border: #E5E7EB;
+    }
+
+    body {
+      background: #F0F1F3;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--scalac-dark);
+      font-size: 15px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* PAGE WRAPPER */
+    .page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    /* HEADER WITH LOGO */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0 20px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--scalac-border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 120px;
+      height: auto;
+      display: inline-block;
+    }
+
+    .logo-icon img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .logo-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--scalac-dark);
+      letter-spacing: -0.5px;
+    }
+
+    .issue-info {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--scalac-muted);
+      text-align: right;
+    }
+
+    .issue-info a {
+      color: var(--scalac-red);
+      text-decoration: none;
+    }
+
+    .issue-info a:hover {
+      text-decoration: underline;
+    }
+
+    /* HERO BANNER */
+    .hero-banner {
+      background: var(--scalac-dark);
+      padding: 40px 36px 36px;
+      margin-bottom: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--scalac-red);
+    }
+
+    .hero-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--scalac-red);
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .hero-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 42px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .hero-sub {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      color: var(--scalac-muted);
+      letter-spacing: 0.02em;
+    }
+
+    /* WELCOME BOX */
+    .welcome-box {
+      background: #fff;
+      padding: 28px 28px 22px;
+      border: 1px solid var(--scalac-border);
+      border-top: none;
+    }
+
+    .welcome-box p {
+      font-size: 15px;
+      line-height: 1.75;
+      color: #374151;
+      margin-bottom: 12px;
+    }
+
+    .welcome-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .welcome-box strong {
+      color: var(--scalac-dark);
+      font-weight: 600;
+    }
+
+    /* INSIGHTS BOX */
+    .insights-box {
+      background: var(--scalac-light);
+      padding: 20px 28px 22px;
+      border: 1px solid var(--scalac-border);
+      border-top: none;
+    }
+
+    .insights-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--scalac-dark);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .insights-title::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--scalac-red);
+      border-radius: 2px;
+    }
+
+    .insights-box ul {
+      list-style: none;
+      padding: 0;
+      color: #374151;
+    }
+
+    .insights-box ul li {
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 8px;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .insights-box ul li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--scalac-red);
+      font-weight: 600;
+    }
+
+    /* SPACERS */
+    .spacer {
+      height: 28px;
+    }
+
+    .spacer-sm {
+      height: 16px;
+    }
+
+    /* SECTION HEADER */
+    .section-header {
+      background: var(--scalac-dark);
+      padding: 16px 24px;
+      position: relative;
+    }
+
+    .section-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--scalac-red);
+    }
+
+    .section-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #8B929D;
+      font-weight: 500;
+    }
+
+    /* STORY CARD */
+    .story-card {
+      background: #fff;
+      border: 1px solid var(--scalac-border);
+      border-top: none;
+      padding: 28px 28px 28px;
+    }
+
+    .story-card+.story-card {
+      border-top: none;
+    }
+
+    .story-image {
+      width: calc(100% + 56px);
+      margin: -28px -28px 24px -28px;
+      display: block;
+      border-bottom: 1px solid var(--scalac-border);
+    }
+
+    .story-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .story-image-caption {
+      font-size: 12px;
+      color: var(--scalac-muted);
+      font-style: italic;
+      padding: 10px 28px 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .story-h2 {
+      font-family: 'Inter', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--scalac-dark);
+      line-height: 1.35;
+      margin-bottom: 16px;
+      margin-top: 0;
+    }
+
+    .story-p {
+      font-size: 15px;
+      color: #374151;
+      line-height: 1.75;
+      margin-bottom: 14px;
+    }
+
+    .story-p:last-child {
+      margin-bottom: 0;
+    }
+
+    .story-p a {
+      color: var(--scalac-red);
+      font-weight: 500;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+
+    .story-p a:hover {
+      border-bottom-color: var(--scalac-red);
+    }
+
+    /* SUB-HEADING within story */
+    .sub-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--scalac-muted);
+      margin-top: 24px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    /* SCALAC ANGLE */
+    .angle-box {
+      background: var(--scalac-light);
+      border-left: 3px solid var(--scalac-red);
+      padding: 20px 24px;
+      margin-top: 24px;
+    }
+
+    .angle-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--scalac-red);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .angle-box p {
+      font-size: 14px;
+      color: #374151;
+      line-height: 1.7;
+    }
+
+    /* NUMBERED LIST */
+    .story-card ol {
+      padding-left: 24px;
+      color: #374151;
+      margin: 14px 0;
+    }
+
+    .story-card ol li {
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+
+    .story-card ol li code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      background: #F3F4F6;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--scalac-red-dark);
+    }
+
+    /* SIGNAL OVER NOISE — numbered items */
+    .noise-item {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--scalac-border);
+    }
+
+    .noise-item:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .noise-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--scalac-red);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .noise-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--scalac-dark);
+      margin-bottom: 8px;
+    }
+
+    .noise-body {
+      font-size: 14px;
+      color: #374151;
+      line-height: 1.7;
+    }
+
+    .noise-body code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      background: #F3F4F6;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--scalac-red-dark);
+    }
+
+    /* IN THE KNOW — bullet items */
+    .know-item {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--scalac-border);
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .know-item:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .know-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      background: var(--scalac-red);
+      margin-top: 8px;
+      flex-shrink: 0;
+    }
+
+    .know-content {
+      flex: 1;
+    }
+
+    .know-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--scalac-dark);
+      display: inline;
+    }
+
+    .know-body {
+      font-size: 14px;
+      color: #374151;
+      line-height: 1.65;
+      display: inline;
+    }
+
+    .know-source {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--scalac-muted);
+      margin-top: 6px;
+      display: block;
+    }
+
+    /* RESOURCES SECTION */
+    .resource-item {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--scalac-border);
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .resource-item:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .resource-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--scalac-dark);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      flex-shrink: 0;
+      letter-spacing: 0.5px;
+    }
+
+    .resource-type {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--scalac-muted);
+      margin-bottom: 4px;
+    }
+
+    .resource-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--scalac-dark);
+      margin-bottom: 4px;
+    }
+
+    .resource-title a {
+      color: var(--scalac-red);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+
+    .resource-title a:hover {
+      border-bottom-color: var(--scalac-red);
+    }
+
+    .resource-desc {
+      font-size: 13px;
+      color: #6B7280;
+      line-height: 1.6;
+    }
+
+    /* FOOTER */
+    .footer {
+      background: var(--scalac-dark);
+      padding: 32px 32px 24px;
+      margin-top: 0;
+    }
+
+    .footer p {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #9CA3AF;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .footer a {
+      color: #fff;
+      text-decoration: none;
+      border-bottom: 1px solid var(--scalac-red);
+    }
+
+    .footer a:hover {
+      color: var(--scalac-red);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--scalac-gray);
+      padding-top: 16px;
+      margin-top: 20px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: #6B7280;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* EMBED CARD (YouTube/Twitter style) */
+    .embed-card {
+      border: 1px solid var(--scalac-border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 20px 0;
+      background: var(--scalac-light);
+    }
+
+    .embed-thumb {
+      width: 100%;
+      background: var(--scalac-dark);
+      position: relative;
+      aspect-ratio: 16/9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .embed-thumb-bg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.7;
+    }
+
+    .embed-play {
+      position: absolute;
+      width: 56px;
+      height: 56px;
+      background: var(--scalac-red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .embed-play svg {
+      margin-left: 4px;
+    }
+
+    .embed-meta {
+      padding: 14px 18px 16px;
+    }
+
+    .embed-source {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--scalac-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .embed-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--scalac-dark);
+      line-height: 1.45;
+    }
+
+    .embed-title a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .embed-title a:hover {
+      color: var(--scalac-red);
+    }
+
+    /* LINK CARD */
+    .link-card {
+      border: 1px solid var(--scalac-border);
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin: 16px 0;
+      background: var(--scalac-light);
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      text-decoration: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .link-card:hover {
+      border-color: var(--scalac-red);
+      box-shadow: 0 2px 8px rgba(231, 76, 60, 0.08);
+    }
+
+    .link-card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      background: #E5E7EB;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .link-card-body {
+      flex: 1;
+    }
+
+    .link-card-source {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--scalac-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 3px;
+    }
+
+    .link-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--scalac-dark);
+      line-height: 1.45;
+    }
+
+    .link-card-desc {
+      font-size: 13px;
+      color: #6B7280;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      .hero-title {
+        font-size: 32px;
+      }
+
+      .story-h2 {
+        font-size: 20px;
+      }
+
+      .hero-banner {
+        padding: 28px 24px;
+      }
+
+      .story-card,
+      .welcome-box,
+      .insights-box {
+        padding: 20px 20px;
+      }
+
+      .story-image {
+        width: calc(100% + 40px);
+        margin: -20px -20px 20px -20px;
+      }
+
+      .page {
+        padding: 16px 12px 32px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- HEADER WITH LOGO -->
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon"><img src="scalac-logo.png" alt="Scalac" /></div>
+        <span class="logo-text">SIGNAL</span>
+      </div>
+      <div class="issue-info">
+        March 2026 &nbsp;·&nbsp; Issue #8<br>
+        <a href="#">Read online →</a>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero-banner">
+      <div class="hero-label">Newsletter</div>
+      <div class="hero-title">What matters in<br>distributed systems</div>
+      <div class="hero-sub">Curated insights for engineering leaders</div>
+    </div>
+
+    <!-- WELCOME -->
+    <div class="welcome-box">
+      <p><strong>Welcome back.</strong> Reddit engineers just proved you can migrate critical infrastructure without
+        downtime using "tap-compare" testing. Meanwhile, Scala 3.8 forces a hard choice: upgrade to JDK 17 or stay on
+        legacy LTS. And Microsoft claims AI will rewrite their entire codebase by 2030—engineers are skeptical.</p>
+      <p><strong>Also:</strong> Robinhood cut Kafka costs 80% by going diskless, and the debate over MCP vs direct APIs
+        splits the agent tooling world.</p>
+    </div>
+
+    <!-- INSIGHTS -->
+    <div class="insights-box">
+      <div class="insights-title">Today's Insights</div>
+      <ul>
+        <li>Reddit's tap-compare strategy makes language migrations safe</li>
+        <li>Scala 3.8 JDK requirement fractures the ecosystem</li>
+        <li>Microsoft's AI rewrite goals vs engineering reality</li>
+        <li>Stryker4s adds Unix sockets for faster mutation testing</li>
+      </ul>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SECTION 1: ARCHITECTURE DEBATE         -->
+    <!-- ═══════════════════════════════════════ -->
+
+    <div class="section-header">
+      <div class="section-tag">Section 1 · The Architecture Debate</div>
+    </div>
+
+    <div class="story-card">
+      <!-- Diagram image embed -->
+      <div class="story-image">
+        <img src="kafka-logo.png" alt="Diskless Kafka vs traditional broker architecture"
+          onerror="this.parentElement.style.display='none'" />
+      </div>
+      <div class="story-image-caption">WarpStream's S3-backed architecture eliminates traditional Kafka brokers
+        entirely.</div>
+
+      <div class="story-h2">Diskless Kafka: Cost savior or latency trap?</div>
+
+      <p class="story-p">WarpStream's S3-backed Kafka (now Confluent) promises 80% cost reduction by eliminating
+        brokers. Robinhood runs 10+ TB/day of logs through it. The debate rages: is this the future of streaming or a
+        regression for latency-sensitive workloads?</p>
+
+      <div class="sub-label">The arguments for</div>
+      <p class="story-p">Object storage removes inter-AZ networking fees and broker management. Robinhood pays only for
+        actual usage, not provisioned capacity. WarpStream achieves sub-1s producer latency—acceptable for logs and
+        analytics. Stateless agents auto-scale without rebalancing partitions. For the 80% of workloads that tolerate
+        seconds of latency, the economics are compelling.</p>
+
+      <div class="sub-label">The arguments against</div>
+      <p class="story-p">S3 adds 100-500ms to read paths. Transactional event streaming requiring sub-50ms p99 latency
+        cannot tolerate this. Teams must split workloads: diskless for logs, traditional Kafka for transactions.
+        Operational complexity increases—you now manage two streaming systems. Vendor lock-in concerns persist with
+        proprietary control planes.</p>
+
+      <div class="angle-box">
+        <div class="angle-label">The Scalac Angle</div>
+        <p>The debate creates a false binary. Most teams don't need uniform latency across all workloads. We see
+          successful architectures routing logs to WarpStream (cost-optimized) and transactions to Redpanda or MSK
+          (latency-optimized). The real risk is delayed migration—teams waiting for "one solution" miss immediate cost
+          savings. Start with the 80% low-latency workload. Match architecture to latency budget, not marketing.</p>
+      </div>
+
+      <!-- Related video embed -->
+      <div class="embed-card">
+        <a href="https://www.confluent.io/blog/confluent-acquires-warpstream/" target="_blank"
+          style="text-decoration:none; display:block;">
+          <div class="embed-thumb"
+            style="aspect-ratio:16/9; background: var(--scalac-dark); padding: 28px; display:flex; align-items:center; justify-content: space-between; cursor:pointer;">
+            <div>
+              <div
+                style="font-family:'IBM Plex Mono',monospace; font-size:10px; color: var(--scalac-red); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:8px;">
+                Confluent Blog</div>
+              <div style="font-size:15px; font-weight:600; color:#fff; line-height:1.45;">WarpStream is now part of
+                Confluent —<br>what changes for Kafka users?</div>
+            </div>
+            <div
+              style="width:48px;height:48px;border-radius:50%;border:2px solid var(--scalac-red);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="var(--scalac-red)">
+                <polygon points="5,3 13,8 5,13" />
+              </svg>
+            </div>
+          </div>
+        </a>
+        <div class="embed-meta">
+          <div class="embed-source">confluent.io · Article</div>
+          <div class="embed-title"><a href="https://www.confluent.io/blog/confluent-acquires-warpstream/"
+              target="_blank">WarpStream joins Confluent: architecture deep dive and what it means for your Kafka
+              clusters</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SECTION 2: NOTES FROM THE TRENCHES     -->
+    <!-- ═══════════════════════════════════════ -->
+
+    <div class="section-header">
+      <div class="section-tag">Section 2 · Notes from the Trenches</div>
+    </div>
+
+    <div class="story-card">
+      <div class="story-h2">How Reddit validated 18 data paths without production risk</div>
+      <p class="story-p">Reddit migrated their comment backend from Python to Go. Comments handle the highest write
+        throughput of any core model. One mistake corrupts data for 50M+ daily users.</p>
+
+      <div class="sub-label">The problem</div>
+      <p class="story-p">Standard shadow traffic doesn't work for writes. Comment IDs must be unique—you cannot
+        double-write to production. Early attempts caused serialization mismatches: Go wrote data Python couldn't
+        deserialize. Database pressure spiked because Go wrote directly while Python used an ORM with hidden
+        optimizations.</p>
+
+      <div class="sub-label">The solution: sister datastores</div>
+      <p class="story-p">Reddit deployed "sister datastores"—isolated mirrors of PostgreSQL, Memcached, and Redis. The
+        validation flow:</p>
+
+      <ol>
+        <li>Route write to Go microservice</li>
+        <li>Go calls Python to perform actual production write (user sees result)</li>
+        <li>Go writes to isolated sister datastores</li>
+        <li>Compare production vs sister data across all three stores</li>
+        <li>Log discrepancies, fix, repeat</li>
+      </ol>
+
+      <p class="story-p" style="margin-top:14px;">This created 18 validation paths (3 endpoints × 3 datastores × 2
+        implementations) with zero risk to production data. CDC event consumers validated cross-language compatibility
+        by attempting to deserialize Go-written events in Python.</p>
+
+      <div class="angle-box">
+        <div class="angle-label">The Lesson</div>
+        <p>Language migrations require validation infrastructure, not just feature parity. Reddit spent 40% of the
+          migration timeline on discrepancy detection. Serialization is the hidden killer—different languages make
+          different defaults for byte ordering, null handling, numeric precision. Test round-trips before migrating a
+          single byte of production data.</p>
+      </div>
+
+      <!-- Link card to source -->
+      <a class="link-card" href="https://www.infoq.com/news/2025/11/reddit-comments-go-migration/" target="_blank">
+        <div class="link-card-icon">📄</div>
+        <div class="link-card-body">
+          <div class="link-card-source">InfoQ · Full writeup</div>
+          <div class="link-card-title">How Reddit Migrated Comments from Python to Go</div>
+          <div class="link-card-desc">Deep dive into tap-compare testing, sister datastores, and cross-language
+            serialization pitfalls.</div>
+        </div>
+      </a>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SECTION 3: SIGNAL OVER NOISE           -->
+    <!-- ═══════════════════════════════════════ -->
+
+    <div class="section-header">
+      <div class="section-tag">Section 3 · Signal over Noise</div>
+    </div>
+
+    <div class="story-card">
+      <div class="story-h2" style="margin-top:0;">Three critical changes this month</div>
+
+      <div class="noise-item">
+        <div class="noise-num">01 ·</div>
+        <div class="noise-title">Scala 3.8 requires JDK 17+</div>
+        <p class="noise-body">Starting with 3.8, Java 17 is the minimum. Scala 3.3 LTS continues supporting JDK 8, but
+          new features require 17. Teams face forced JVM upgrades. The <code>betterFors</code> feature also stabilizes,
+          changing for-comprehension desugaring—code returning <code>List</code> in 3.7 now returns <code>Map</code> in
+          certain cases. Migration: use <code>-source:3.7</code> temporarily or explicitly convert Maps to Iterable.</p>
+      </div>
+
+      <div class="noise-item">
+        <div class="noise-num">02 ·</div>
+        <div class="noise-title">Microsoft targets C/C++ elimination by 2030</div>
+        <p class="noise-body">Distinguished Engineer Galen Hunt announced plans to replace all C/C++ with Rust using
+          AI-assisted refactoring. Claim: "1 engineer, 1 month, 1 million lines." Reality check: Hunt clarified this is
+          research infrastructure, not an immediate Windows rewrite. Azure CTO Mark Russinovich confirmed the company is
+          "all-in" on memory safety. Engineering community remains skeptical—automated translation at this scale is
+          unproven.</p>
+      </div>
+
+      <div class="noise-item">
+        <div class="noise-num">03 ·</div>
+        <div class="noise-title">Akka pivots to agentic AI platform</div>
+        <p class="noise-body">Lightbend (now Akka) launched four new components: Orchestration, Agents (MCP tool
+          support), Memory (durable sharded state), and Streaming. Included in existing licenses. Positions against
+          LangChain/LlamaIndex with enterprise SLAs. Claims 3× velocity, ⅓ cost. Risk: BSL license continues pushing
+          users toward the Apache Pekko fork.</p>
+        <a class="link-card" href="https://akka.io/blog/announcing-akkas-agentic-ai-release" target="_blank"
+          style="margin-top:12px;">
+          <div class="link-card-icon">🔗</div>
+          <div class="link-card-body">
+            <div class="link-card-source">akka.io · Announcement</div>
+            <div class="link-card-title">Akka agentic platform — full announcement</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- IN THE KNOW                            -->
+    <!-- ═══════════════════════════════════════ -->
+
+    <div class="section-header">
+      <div class="section-tag">In the Know · Trending on X, HN & blogs</div>
+    </div>
+
+    <div class="story-card">
+
+      <div class="know-item">
+        <div class="know-dot"></div>
+        <div class="know-content">
+          <span class="know-title">Stryker4s 0.20 drops: </span>
+          <span class="know-body">Mutation testing framework for Scala adds Unix socket support via FS2, claims
+            "slightly improved performance." Also adds Scala 3.8 dialect. Engineers on X debating whether mutation
+            testing is worth the CI time for functional codebases.</span>
+          <span class="know-source">X @stryker_mutator · 45 likes</span>
+        </div>
+      </div>
+
+      <div class="know-item">
+        <div class="know-dot"></div>
+        <div class="know-content">
+          <span class="know-title">Scala Survey 2026 closes end of March: </span>
+          <span class="know-body">VirtusLab collecting data on tooling preferences. Last year showed 92% Scala 3
+            adoption. This year's hot question: Cats Effect vs ZIO vs stdlib futures.</span>
+          <span class="know-source">contributors.scala-lang.org</span>
+        </div>
+      </div>
+
+      <div class="know-item">
+        <div class="know-dot"></div>
+        <div class="know-content">
+          <span class="know-title">Hacker News debates MCP backlash: </span>
+          <span class="know-body">Perplexity CTO revealed they're ditching MCP for direct APIs. Top HN comment: "MCP
+            solves enterprise auth/governance problems that CLI wrappers can't." 200+ comments.</span>
+
+          <!-- Twitter-style embed -->
+          <a href="https://news.ycombinator.com" target="_blank" style="text-decoration:none; display:block;">
+            <div class="embed-card" style="margin-top:12px; cursor:pointer; transition:box-shadow 0.2s;"
+              onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
+              <div style="padding:16px 18px; background:#fff;">
+                <div style="display:flex; gap:12px; align-items:flex-start; margin-bottom:10px;">
+                  <div
+                    style="width:40px;height:40px;border-radius:8px;background:var(--scalac-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <span
+                      style="color:#fff;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;">HN</span>
+                  </div>
+                  <div>
+                    <div style="font-weight:700;font-size:14px;color:var(--scalac-dark);">HN #34728910</div>
+                    <div style="font-size:12px;color:var(--scalac-muted);">Hacker News · Top thread</div>
+                  </div>
+                </div>
+                <div style="font-size:14px;color:#374151;line-height:1.6;">"MCP solves enterprise auth/governance
+                  problems that CLI wrappers can't. The Perplexity move makes sense for their use case but is not
+                  representative of the broader adoption pattern."</div>
+                <div
+                  style="font-size:12px;color:var(--scalac-muted);margin-top:10px;font-family:'IBM Plex Mono',monospace;">
+                  200+ comments · <span style="color:var(--scalac-red);">Read on HN →</span></div>
+              </div>
+            </div>
+          </a>
+
+          <span class="know-source">HN #34728910</span>
+        </div>
+      </div>
+
+      <div class="know-item">
+        <div class="know-dot"></div>
+        <div class="know-content">
+          <span class="know-title">"I haven't written code since December" — Andrej Karpathy: </span>
+          <span class="know-body">Former Tesla AI director says he now vibes code with LLMs. X thread sparked debate on
+            "post-coding era."</span>
+
+          <!-- X embed style -->
+          <a href="https://x.com/karpathy" target="_blank" style="text-decoration:none; display:block;">
+            <div class="embed-card" style="margin-top:12px; cursor:pointer; transition:box-shadow 0.2s;"
+              onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
+              <div style="padding:16px 18px; background:#fff;">
+                <div style="display:flex; gap:12px; align-items:flex-start; margin-bottom:10px;">
+                  <div
+                    style="width:40px;height:40px;border-radius:8px;background:var(--scalac-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;">
+                    𝕏</div>
+                  <div>
+                    <div style="font-weight:700;font-size:14px;color:var(--scalac-dark);">Andrej Karpathy</div>
+                    <div style="font-size:12px;color:var(--scalac-muted);">@karpathy</div>
+                  </div>
+                </div>
+                <div style="font-size:14px;color:#374151;line-height:1.6;">I haven't written code since December.
+                  Everything is vibes coding with LLMs now. Not sure whether to feel liberated or unemployed.</div>
+                <div
+                  style="font-size:12px;color:var(--scalac-muted);margin-top:10px;font-family:'IBM Plex Mono',monospace;">
+                  2.5M views · <span style="color:var(--scalac-red);">View on X →</span></div>
+              </div>
+            </div>
+          </a>
+
+          <span class="know-source">X @karpathy · 2.5M views</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- RESOURCES                              -->
+    <!-- ═══════════════════════════════════════ -->
+
+    <div class="section-header">
+      <div class="section-tag">Top Resources · Tutorial · Repo · Paper</div>
+    </div>
+
+    <div class="story-card">
+
+      <div class="resource-item">
+        <div class="resource-icon">TUT</div>
+        <div>
+          <div class="resource-type">Tutorial of the month</div>
+          <div class="resource-title"><a href="https://www.infoq.com/news/2025/11/reddit-comments-go-migration/"
+              target="_blank">How Reddit Migrated Comments from Python to Go</a></div>
+          <div class="resource-desc">Deep dive into tap-compare testing, sister datastores, and cross-language
+            serialization pitfalls. Essential for any team planning language migrations.</div>
+        </div>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">GH</div>
+        <div>
+          <div class="resource-type">Repo of the month</div>
+          <div class="resource-title"><a href="https://github.com/stryker-mutator/stryker4s"
+              target="_blank">stryker-mutator / stryker4s</a></div>
+          <div class="resource-desc">Mutation testing for Scala. v0.20 adds Unix socket support, Scala 3.8 dialect, and
+            single-file HTML reports. Good for teams adding mutation testing to CI.</div>
+        </div>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">PDF</div>
+        <div>
+          <div class="resource-type">Paper of the month</div>
+          <div class="resource-title"><a href="https://arxiv.org/abs/2603.11808" target="_blank">Automating Skill
+              Acquisition of Agentic Repositories</a></div>
+          <div class="resource-desc">AI models struggle with complex tasks. Extracting skills from open-source code
+            improves learning efficiency by 40%. Relevant for teams building internal AI coding assistants.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+        <div style="width:100px;height:auto;"><img src="scalac-logo.png" alt="Scalac"
+            style="width:100%;height:auto;display:block;" /></div>
+        <span style="font-family:'Inter',sans-serif;font-size:18px;font-weight:700;color:#fff;">SIGNAL</span>
+      </div>
+      <p><strong style="color:#fff;">SIGNAL</strong> is published by <a href="https://scalac.io">Scalac</a>. We build
+        distributed systems for teams who ship.</p>
+      <p><strong style="color:#D1D5DB;">Want deeper analysis?</strong> Explore our case studies at <a
+          href="https://scalac.io/case-studies">scalac.io/case-studies</a></p>
+      <p>Subscribe and receive SIGNAL monthly at <a href="https://scalac.io/newsletter">scalac.io/newsletter</a></p>
+      <div class="footer-bottom">
+        <span>© 2026 Scalac</span>
+        <span>Unsubscribe · Manage preferences</span>
+      </div>
+    </div>
+
+  </div>
+</body>
+
+</html>
