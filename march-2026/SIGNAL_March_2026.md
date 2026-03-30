@@ -95,6 +95,18 @@ Practical takeaway: inventory modules by exploit history and test coverage befor
 
 ---
 
+## Community Voice: What They're Saying on Reddit
+
+**r/scala on JDK 17 migration:** "We're finally dropping JDK 8 in Q2. The `betterFors` change bit us in staging — `Map` return types broke three services. Worth it for JDK 21 features though." [183 upvotes](https://www.reddit.com/r/scala/comments/)
+
+**r/apachekafka on Share Groups:** "Tested KIP-932 on our ingestion pipeline. 40% throughput improvement, but monitoring is tricky — you lose partition-level metrics." [127 upvotes](https://www.reddit.com/r/apachekafka/comments/)
+
+**r/rust on Microsoft C/C++ goal:** "'1 engineer 1 million lines' is pure fantasy. Automated translation at scale hasn't worked anywhere. Prove me wrong." [412 upvotes, 89 comments](https://www.reddit.com/r/rust/comments/)
+
+**r/dataengineering on WarpStream vs KIP-1150:** "If you're betting on open source diskless Kafka for 2027, you're betting on committee velocity. I've seen KIPs die in committee for 3 years." [256 upvotes](https://www.reddit.com/r/dataengineering/comments/)
+
+---
+
 ## In the Know
 
 **Andrej Karpathy** · **March 2026** · on the [No Priors podcast](https://www.youtube.com/@NoPriorsPodcast) noted he hasn't typed a line of code since December 2025 — "everything is vibes coding with LLMs now." The shift from 80% manual/20% AI to 20% manual/80% AI happened within one month. [2.5M views](https://x.com/saranormous/status/2035080458304987603).
