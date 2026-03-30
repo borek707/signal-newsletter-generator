@@ -1,92 +1,133 @@
-# SIGNAL
-## What matters in distributed systems
-March 2026 · **Scalac** · [scalac.io](https://scalac.io)
+---
+title: "SIGNAL March 2026: Diskless Kafka, Share Groups, and the MCP Backlash"
+description: "Monthly briefing for CTOs and Senior Architects. KIP-1150 makes diskless Kafka official, Kafka 4.2 graduates Share Groups, and the MCP protocol faces an identity crisis."
+author: "Scalac Engineering Team"
+date: "2026-03-30"
+tags: ["distributed-systems", "kafka", "scala", "rust", "mcp", "engineering-leadership"]
+image: "/images/blog/signal-march-2026-kafka.png"
+---
+
+# SIGNAL: What matters in distributed systems
+
+**March 2026 | Issue #1**
+
+![Apache Kafka 4.2.0 Release](/images/blog/signal-march-2026-kafka.png)
+*Apache Kafka 4.2.0 brings production-ready Share Groups — finally breaking the partition-to-consumer limit.*
+
+**Welcome to SIGNAL.** This is a monthly briefing for CTOs, VP Engineering, and Chief Architects running distributed systems at scale. We don't aggregate news. We aggregate lessons. 
+
+Every month: one architecture debate with real trade-offs, one production war story with solutions, and three critical signals with business context. No hype cycles. No vendor pitches. Just what you need to know to make better infrastructure decisions.
+
+**Also this month:** Kafka 4.2 ships Share Groups that finally break the partition-to-consumer limit. The MCP protocol faces an identity crisis as Perplexity's CTO dumps it. And Mill 1.0 emerges as a genuine sbt alternative.
 
 ---
 
-**Welcome back.** Confluent just bought WarpStream and changed the Kafka cost calculus for every team still running brokers. Scala 3.8 landed with a hard JDK 17 floor and a for-comprehension change subtle enough to slip through code review. And Akka launched an agentic AI platform the same week Perplexity's CTO publicly dumped MCP — the protocol Akka just built its whole new stack around.
+## Today
 
-**Also:** Reddit halved comment write latency by migrating from Python to Go without a single double-write to production. Microsoft declared war on every line of C and C++ in the company.
-
----
-
-##### THE ARCHITECTURE DEBATE
-
-## Diskless Kafka: the Confluent acquisition changes the calculus
-
-WarpStream throws out the broker disk entirely and writes directly to S3. Robinhood runs more than 10 TB/day of log analytics through it and cut costs 80%. No inter-AZ networking fees, no provisioned capacity sitting idle, stateless agents that scale without rebalancing partitions. For any workload that tolerates a second of end-to-end latency, the economics are genuinely hard to argue with.
-
-The latency constraint hasn't moved. S3 adds 100–500ms to read paths, which means transactional event streaming requiring sub-50ms p99 can't use this architecture. Teams that discover this in production — rather than in testing — end up running two systems anyway, which was supposed to be what they were escaping.
-
-What changed in March is that Confluent acquired WarpStream. That resolves one of the main blockers for enterprise adoption: proprietary control plane risk. It's now inside the most feature-complete commercial Kafka distribution, which makes the migration considerably easier to justify internally.
-
-**Scalac angle:** The framing was always wrong. It was never WarpStream or Kafka — it's routing by workload. Logs and analytics to WarpStream, transactions to Redpanda or MSK. The Confluent acquisition doesn't change the architecture decision, but it does reduce the risk of starting the migration today. Teams who keep waiting for one tool to serve every latency tier are paying unnecessary broker costs while they wait.
-
-🔗 [Robinhood case study](https://www.warpstream.com/blog/robinhood-case-study) · [WarpStream joins Confluent](https://www.confluent.io/blog/confluent-acquires-warpstream/)
+• **[KIP-1150](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1150%3A+Diskless+Topics)** makes diskless Kafka official — two paths to S3-backed streaming converge  
+• **[Kafka 4.2](https://kafka.apache.org/downloads#4.2.0)** graduates Share Groups — scale consumers by workload, not partition count  
+• **[Scala 3.8](https://www.scala-lang.org/news/3.8/)** locks in JDK 17, 3.9 LTS approaches with the same floor  
+• **MCP backlash** intensifies — [Akka](https://akka.io/blog/announcing-akkas-agentic-ai-release) doubles down, Perplexity folds  
+• **[Mill 1.0](https://github.com/com-lihaoyi/mill/releases/tag/1.0.0)** ships — 3-6x faster builds than sbt
 
 ---
 
-##### NOTES FROM THE TRENCHES
+## The Architecture Debate: Diskless Kafka
 
-## How Reddit migrated 50M users' data without a single double-write
+![Apache Kafka](images/kafka-hero-confluent.png)
+*Hero image from Confluent blog — Apache Kafka 4.2.0 release*
 
-Reddit comments run the highest write throughput of any core model on the platform. One serialization mismatch doesn't file a bug report — it corrupts data at scale. So when the team migrated the comment backend from Python to Go, the constraint was absolute: no double-writes to production.
+**Apache Kafka approves [KIP-1150](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1150%3A+Diskless+Topics).** Diskless topics are now officially on the Apache Kafka roadmap. The community voted yes on March 2nd, accepting a leaderless architecture where brokers serve partitions directly from object storage. 
 
-The first approach failed immediately. Standard shadow traffic doesn't work for write migrations because comment IDs must be unique. Early attempts also exposed a subtler problem: Go wrote data that Python's deserializer couldn't read back. Database pressure spiked because Go wrote directly to storage while Python's ORM applied hidden optimizations the new service didn't know about.
+The catch: production readiness is 2027 at earliest. KIP-1164 (Batch Coordinator) and several sub-proposals still need implementation.
 
-The solution they landed on was sister datastores — isolated mirrors of PostgreSQL, Memcached, and Redis running in parallel. A write would hit the Go service, which would pass it to Python for the actual production write, then write independently to the sister stores. Compare, log discrepancies, fix, repeat. CDC event consumers sat downstream reading every write event and attempting to deserialize Go-written data through the Python path — catching byte ordering assumptions, null-versus-zero distinctions the ORM had silently normalised for years, and floating point precision differences that only appeared in edge case comment score calculations. None of those would have shown up in a feature-parity test suite. All of them would have corrupted data silently after cutover. The team spent 40% of the migration timeline on this validation layer. P99 write latency dropped 50%. Spikes that reached 15 seconds disappeared.
+**Confluent acquired WarpStream in January.** The proprietary fork already delivers 80% cost reductions for log analytics workloads. Robinhood runs 10+ TB/day through it. Latency penalty remains 100-500ms — fine for logs, unacceptable for transactions requiring sub-50ms p99.
 
-**Scalac angle:** The lesson isn't the 18-path validation structure. The lesson is that feature parity tests don't test serialization contracts. Before any language migration, run real write traffic through the new implementation and compare raw bytes at the deserialization layer. The round-trip test — write with Go, read with Python — is the one that finds the hidden assumptions.
+**The debate nobody is framing correctly:** This isn't open source versus proprietary. It's vendor lock-in today versus migration complexity tomorrow. KIP-1150 offers gradual, topic-by-topic migration. WarpStream requires ripping out brokers entirely. Greenfield teams face a real choice. Existing estates should probably wait.
 
-🔗 [Full write-up on InfoQ](https://www.infoq.com/news/2025/11/reddit-comments-go-migration/)
-
----
-
-##### SIGNAL OVER NOISE
-
-**Scala 3.8 requires JDK 17, and the silent break is worse than the obvious one.** Released February 24, 2026. JDK 8 and 11 are out. That's the obvious break, and most teams saw it coming. The one that slips through is `betterFors`: for-comprehensions over Maps now return `Map` instead of `List` in certain cases, and the type mismatch is subtle enough to pass code review without failing tests. The 3.3 LTS line stays on JDK 8 for now, but 3.9 LTS lands in Q2 2026 with the same floor. That's the real deadline. `-source:3.7` buys time; explicit `.toIterable` on Map iterators is the permanent fix.
-🔗 [Scala release blog](https://www.scala-lang.org/blog/releases/)
-
-**Akka launched an agentic AI platform the same week MCP's reputation took a hit.** Lightbend, now rebranded as Akka, shipped four new components: Orchestration, Agents with MCP tool support, Memory as durable sharded state, and Streaming. All included in existing licenses. The same week, Perplexity's CTO announced they're replacing MCP with direct API calls, and Hacker News lit up with 200+ comments. The divide: MCP overhead doesn't matter for internal tooling with fixed integrations, but it earns its weight in multi-tenant environments that need centralised auth, observability, and governance — exactly the enterprise context Akka is targeting. The risk that hasn't changed: the BSL license continues pushing teams toward Apache Pekko. The fork decision needs to be made before you build anything new on Akka.
-🔗 [Akka announcement](https://akka.io/blog/announcing-akkas-agentic-ai-release) · [MCP debate on HN](https://news.ycombinator.com)
-
-**Microsoft's C/C++ goal is research, not a roadmap — but it matters for Rust adoption.** Distinguished Engineer Galen Hunt posted the goal publicly: eliminate every line of C and C++ from Microsoft by 2030, "1 engineer, 1 month, 1 million lines of code." Hunt clarified afterward that this is tooling research, not an immediate Windows rewrite. Azure CTO Mark Russinovich has separately confirmed the company is all-in on memory safety. The engineering reaction was predictably skeptical — automated translation at scale hasn't been proven anywhere, and real-world numbers run 10–100× slower than any aspirational baseline. If you're evaluating migration tooling, inventory modules by exploit history and test coverage before running any translation. Build the differential testing harness first.
-🔗 [The Code](https://www.thecode.ai/p/microsoft-rust-2030)
+**Scalac angle:** Greenfield without latency constraints? WarpStream under Confluent's umbrella carries less operational risk than betting on 2027 timelines. Existing Kafka estates? Wait for KIP-1150. Running both systems is what you're trying to escape. The decision isn't which technology; it's your organization's tolerance for vendor lock-in versus timeline uncertainty.
 
 ---
 
-##### IN THE KNOW
+## Notes from the Trenches: How Kafka 4.2 Share Groups Change Everything
 
-**@stryker_mutator · March 16, 2026 · 45 likes**
-Stryker4s 0.20 is out. Unix socket support via FS2, Scala 3.8 dialect, single-file HTML reports. The replies split immediately on whether mutation testing is worth the CI overhead for functional codebases. Short answer: if your suite runs under 10 minutes, the overhead is noise and the signal is real.
-🔗 [Release](https://github.com/stryker-mutator/stryker4s/releases)
+![Scala 3.8](images/scala-hero.png)
+*Hero image from scala-lang.org — Scala 3.8 release*
 
-**contributors.scala-lang.org · closes March 31, 2026**
-Scala Survey 2026 is in its last days. VirtusLab and the Scala Center are asking about tooling preferences, migration blockers, Cats Effect vs ZIO vs stdlib. Last year's survey put Scala 3 adoption at 92%. This year's results shape the 3.9 LTS roadmap. Five minutes.
-🔗 [Take the survey](https://contributors.scala-lang.org/t/new-scala-survey-2026/7398)
+**The partition-to-consumer binding has been Kafka's fundamental scaling constraint since 2011.**
+
+With 4.2.0, [KIP-932](https://cwiki.apache.org/confluence/display/KAFKA/KIP-932%3A+Queues+for+Kafka) graduates to production-ready, introducing Share Groups that decouple parallelism from partition count.
+
+**The Problem:** A topic with 12 partitions maxed out at 12 concurrent consumers. Need more throughput? You re-partition — a destructive operation requiring downtime and backfill.
+
+**The Solution:** Share Groups use cooperative consumption with individual acknowledgment tracking. Multiple consumers can now process records from the same partition concurrently, with the broker managing delivery counts and lock timeouts. KIP-1222 adds lease extension for long-running tasks — send a RENEW acknowledgment to prevent reassignment during processing.
+
+**Migration Reality:** Share Groups require new consumer clients (4.2+) and explicit opt-in. Existing consumer groups work unchanged. The critical change is operational: you can now scale consumers based on CPU/memory constraints rather than partition geometry.
+
+**Scalac angle:** Test Share Groups on your heaviest read workloads — the ones where you've been forced to over-partition to achieve parallelism. Use `share.acquire.mode=record_limit` for strict memory limits. Don't migrate everything. Use Share Groups for the 20% of topics that need elastic scaling, keep traditional groups for the 80% where partition affinity matters.
 
 ---
 
-##### TOP RESOURCES
+## Signal Over Noise: Three Critical Changes This Month
 
-**Repo of the month — [stryker-mutator/stryker4s](https://github.com/stryker-mutator/stryker4s)**
-Mutation testing framework for Scala. v0.20 brings Unix socket support, Scala 3.8 dialect, and single-file HTML reports. If you're going to add mutation testing to CI, this release makes the overhead argument significantly harder to justify skipping it.
+### 1. Scala 3.8 requires JDK 17, and 3.9 LTS locks it in
 
-**Paper of the month — [Automating Skill Acquisition of Agentic Repositories](https://arxiv.org/abs/2603.11808)**
-AI models fail on complex multi-step tasks because they lack reusable procedural knowledge. This paper shows that automatically extracting standardised skills from open-source repositories improves task completion efficiency by 40% while staying at human-level output quality. If your team is building internal coding assistants or agent tooling on top of JVM infrastructure, the skill extraction architecture here is the baseline to benchmark against.
+**Released February 24, 2026.** The `betterFors` feature stabilised with subtle semantic changes — for-comprehensions over Maps now return `Map` instead of `List` in certain cases.
+
+The 3.3 LTS line continues supporting JDK 8 until Q2 2027, but all new development requires JDK 17 minimum. For library authors: cross-compile to 3.3 LTS if you need JDK 8 compatibility; otherwise target 3.8+ with JDK 21 LTS for optimal performance.
+
+### 2. Akka launches Agentic AI as the MCP backlash intensifies
+
+**Launched March 2026.** Lightbend (rebranded Akka) shipped Orchestration, Agents with MCP support, and Memory components in March. The same week, Perplexity CTO Denis Yarats announced at Ask 2026 they're replacing MCP with direct APIs and CLIs, citing context window overhead.
+
+The divide: MCP solves enterprise governance (auth, observability, audit trails) that CLI wrappers can't; but for internal tooling with fixed integrations, the protocol overhead is measurable (10-50x token usage versus direct APIs). Akka's bet on MCP targets enterprise multi-tenant environments exactly where the protocol earns its weight.
+
+### 3. Microsoft's C/C++ elimination goal is research, not roadmap
+
+**Announced December 2025**, clarified March 2026. Distinguished Engineer Galen Hunt [clarified](https://www.thecode.ai/p/microsoft-rust-2030) his "1 engineer, 1 month, 1 million lines" target is tooling research for the "Future of Scalable Software Engineering" group — not an immediate Windows rewrite. Azure has invested ~$10M in Rust since 2022. Automated translation at scale remains unproven.
+
+Practical takeaway: inventory modules by exploit history and test coverage before evaluating migration tooling; build differential testing harnesses before running any translation.
+
+---
+
+## In the Know
+
+**Andrej Karpathy** · **March 2026** · on the [No Priors podcast](https://www.youtube.com/@NoPriorsPodcast) noted he hasn't typed a line of code since December 2025 — "everything is vibes coding with LLMs now." The shift from 80% manual/20% AI to 20% manual/80% AI happened within one month. [2.5M views](https://x.com/saranormous/status/2035080458304987603).
+
+**[Mill 1.0.0](https://github.com/com-lihaoyi/mill/releases/tag/1.0.0)** · **March 2026** · released — the Scala build tool promises 3-6x faster builds than sbt through aggressive caching and parallelization. Native launchers reduce startup to ~100ms. Full Scala Native support and Kotlin interoperability.
+
+**[Apache Pekko 1.1.0](https://pekko.apache.org/)** · **March 2026** — the Apache Foundation's fork of Akka continues maturing as the truly open-source alternative for actor-based distributed systems. With Akka doubling down on proprietary agentic AI features under BSL, Pekko becomes the conservative choice for new JVM distributed systems without license uncertainty.
+
+**[Scala Survey 2026](https://contributors.scala-lang.org/t/new-scala-survey-2026/7398)** · closes **March 31, 2026**. [VirtusLab](https://virtuslab.com/) and [Scala Center](https://scala.epfl.ch/) survey shapes the 3.9 LTS roadmap. Results directly influence compiler priorities.
+
+---
+
+## Top Resources
+
+**Repo:** [apache/pekko](https://github.com/apache/pekko) — Apache Foundation's fork of Akka matures as the truly open-source alternative for actor-based distributed systems. Version 1.1.0 brings cluster sharding improvements and removes remaining Akka-BSL dependencies. Evaluating actor frameworks for new JVM projects? Pekko is now the conservative choice.
+
+**Paper:** [KIP-1150: Diskless Topics](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1150%3A+Diskless+Topics) — this Kafka Improvement Proposal represents the most significant architectural shift in Kafka since KRaft. It details the leaderless design, Batch Coordinator abstraction (KIP-1164), and the trade-offs between local disk and object storage. Planning 2027 infrastructure? This is your technical baseline.
 
 ---
 
 *Signal is published by [Scalac](https://scalac.io). We build distributed systems for teams who ship.*
-[Case studies](https://scalac.io/case-studies) · [Subscribe](https://scalac.io/newsletter)
+
+**What is SIGNAL?** A monthly briefing for senior engineering leaders. Three sections: Architecture Debate, Notes from the Trenches, Signal Over Noise. No hype. No vendor pitches. Just lessons that matter.
 
 ---
 
-## Obrazki do wstawienia
+## References
 
-| Temat | Plik lokalny | Źródło online |
-|---|---|---|
-| Reddit Python→Go migration | `reddit-migration-thumb.jpg` | [InfoQ](https://www.infoq.com/news/2025/11/reddit-comments-go-migration/) |
-| WarpStream / Kafka | `kafka-logo.png` | [Confluent blog](https://www.confluent.io/blog/confluent-acquires-warpstream/) |
-| Stryker4s 0.20 | `stryker4s-thumb.jpg` | [GitHub releases](https://github.com/stryker-mutator/stryker4s/releases) |
-| Scalac logo | `scalac-logo.png` | [scalac.io](https://scalac.io) |
+- [KIP-1150: Diskless Topics](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1150%3A+Diskless+Topics)
+- [Apache Kafka 4.2.0 Release Notes](https://kafka.apache.org/downloads#4.2.0)
+- [KIP-932: Queues for Kafka](https://cwiki.apache.org/confluence/display/KAFKA/KIP-932%3A+Queues+for+Kafka)
+- [Scala 3.8 Release](https://www.scala-lang.org/news/3.8/)
+- [Akka Agentic AI Announcement](https://akka.io/blog/announcing-akkas-agentic-ai-release)
+- [Mill 1.0 Release](https://github.com/com-lihaoyi/mill/releases/tag/1.0.0)
+- [Apache Pekko](https://pekko.apache.org/)
+- [No Priors Podcast](https://www.youtube.com/@NoPriorsPodcast)
+- [Karpathy on X](https://x.com/saranormous/status/2035080458304987603)
+- [Microsoft Rust Research](https://www.thecode.ai/p/microsoft-rust-2030)
+- [Scala Survey 2026](https://contributors.scala-lang.org/t/new-scala-survey-2026/7398)
+- [VirtusLab](https://virtuslab.com/)
+- [Scala Center](https://scala.epfl.ch/)
