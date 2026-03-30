@@ -1,6 +1,6 @@
 ---
 name: signal-newsletter-generator
-description: Generate the SIGNAL newsletter for Scalac. Use when the user asks to create a monthly newsletter, generate SIGNAL, or prepare the distributed systems newsletter. This skill produces a strategic engineering newsletter combining The Code format (short, punchy) with deep architectural analysis (3 sections: Debate, Trenches, Signal).
+description: Generate the SIGNAL newsletter for Scalac. Use when the user asks to create a monthly newsletter, generate SIGNAL, or prepare the distributed systems newsletter. This skill produces a strategic engineering newsletter combining The Code format (short, punchy, metric-driven) with deep architectural analysis (3 sections: Debate, Trenches, Signal).
 metadata:
   trigger: "monthly newsletter", "SIGNAL", "distributed systems newsletter", "create newsletter", "prepare newsletter draft"
   author: Scalac
@@ -21,6 +21,55 @@ Senior engineers don't need library release notes. They need:
 - 3 critical signals with business context
 
 **Scope:** Scala + JVM + Java + Rust + Kafka + Akka + Data Engineering + AI integration
+
+---
+
+## Writing Style: The Code Format
+
+SIGNAL piszemy w stylu "The Code" - short, punchy, metric-driven:
+
+✅ DO:
+- Krótkie akapity (max 2-3 zdania), potem enter
+- Boldowane hooki na początku: "**KIP-1150 makes diskless Kafka official:**"
+- Metryki na pierwszym miejscu: "80% cost reductions", "10+ TB/day", "100-500ms"
+- Aktywny głos: "Apache Kafka approves" nie "KIP-1150 was approved"
+- Konkretne rekomendacje w "Scalac angle", nie ogólne tezy
+- Bez em-dash (—), używaj myślników (-) lub kropek
+- Wszystko podlinkowane - każda firma, projekt, osoba
+
+❌ DON'T:
+- Długie, narracyjne wstępy
+- Pasywne konstrukcje
+- "The debate is a false binary" - za ogólne
+- Throat-clearers: "Here's what you need to know", "In this article", "Let's dive in"
+- Emphasis crutches: "crucial", "critical", "essential", "key", "vital", "game-changer"
+- Business jargon: "leverage", "synergy", "ecosystem", "paradigm shift", "best practices"
+- Adverbs: "importantly", "significantly", "effectively", "efficiently"
+
+---
+
+## Issue Structure
+
+### Issue #1 (pierwszy numer):
+```
+**Welcome to SIGNAL.** This is a monthly briefing for CTOs, VP Engineering, 
+and Chief Architects running distributed systems at scale. We don't aggregate 
+news. We aggregate lessons. Three sections every month: one architecture debate 
+with real trade-offs, one production war story with solutions, and three critical 
+signals with business context. No hype cycles. No vendor pitches.
+
+**Also:** [2 bullet points teasing other major stories]
+```
+
+### Issues #2+ (kolejne numery):
+```
+**Welcome back.** [2-3 sentences. Hook with the most surprising/debated insight. 
+No throat-clearing.]
+
+**Also:** [2 bullet points teasing other major stories]
+```
+
+---
 
 ## Workflow
 
@@ -49,6 +98,8 @@ Senior engineers don't need library release notes. They need:
 - Tutorial posts without production context
 - Vendor marketing without technical depth
 
+---
+
 ### Step 2: Select Content for 3 Sections
 
 **SECTION 1: THE ARCHITECTURE DEBATE**
@@ -56,12 +107,14 @@ Senior engineers don't need library release notes. They need:
 - Two sides of the argument with evidence
 - Technical + business implications
 - Examples: "Diskless Kafka vs latency", "Scala 3 migration vs LTS", "Rust rewrite vs incremental"
+- **MUST HAVE:** "Scalac angle" na końcu
 
 **SECTION 2: NOTES FROM THE TRENCHES**
 - One concrete production problem
 - Specific context (scale, constraints)
-- Solution with code/commands
+- Solution with code/commands if applicable
 - Lesson applicable to other teams
+- **MUST HAVE:** "Scalac angle" na końcu
 
 **SECTION 3: SIGNAL OVER NOISE**
 - Exactly 3 critical changes
@@ -69,109 +122,166 @@ Senior engineers don't need library release notes. They need:
 - Skip trivial patch notes
 - Focus: breaking changes, deprecations, major shifts
 
-### Step 3: Generate Newsletter
+---
 
+### Step 3: Scalac Angle Format
+
+Każda sekcja Debate i Trenches kończy się "Scalac angle":
+
+**Structure:**
+- 2-3 zdania
+- Konkretna rekomendacja akcyjna
+- Nie esej, nie analiza - co zrobić
+- Format: "[Warunek]? [Rekomendacja]. [Alternatywa]? [Rekomendacja]."
+
+**Przykład (DOBRY):**
 ```
-# SIGNAL
-## What matters in distributed systems
-[Month] [Year] | Issue [N]
+**Scalac angle:** Greenfield without latency constraints? WarpStream under 
+Confluent's umbrella carries less operational risk than betting on 2027 timelines. 
+Existing Kafka estates? Wait for KIP-1150. Running both systems is what you're 
+trying to escape. The decision isn't which technology; it's your organization's 
+tolerance for vendor lock-in versus timeline uncertainty.
+```
 
-**Welcome back.** [2-3 sentences. Hook with the most surprising/debated insight. No throat-clearing.]
+**Przykład (ZŁY - za ogólny):**
+```
+**Scalac angle:** The framing of this debate is the main problem. It's not 
+"WarpStream or Kafka" - it's routing by workload. Teams who wait for a single 
+tool that does everything well are paying broker costs while they wait.
+```
+
+---
+
+### Step 4: Generate Newsletter
+
+```markdown
+---
+title: "SIGNAL [Month] [Year]: [Main Topic]"
+description: "[SEO description 150-160 chars]"
+author: "Scalac Engineering Team"
+date: "[YYYY-MM-DD]"
+tags: ["distributed-systems", ...]
+image: "/images/blog/signal-[month]-[year]-[topic].png"
+---
+
+# SIGNAL: What matters in distributed systems
+
+**[Month] [Year] | Issue [N]**
+
+![Hero description](/images/blog/signal-[month]-[year]-[topic].png)
+*[Caption for hero image]*
+
+**Welcome back.** [2-3 sentences. Hook with the most surprising/debated insight. 
+No throat-clearing.]
 
 **Also:** [2 bullet points teasing other major stories]
 
 ---
 
-### **Today's Insights**
+## Today
 
-* [Bullet 1: Main debate topic]
-* [Bullet 2: Production lesson]
-* [Bullet 3: Critical change]
-
----
-
-##### **SECTION 1: THE ARCHITECTURE DEBATE**
-
-## **[Title of debate]**
-
-[Setup: 2-3 sentences what sparked the debate and why it matters now.]
-
-**The Arguments For:**
-[2-3 sentences with specific evidence/metrics]
-
-**The Arguments Against:**
-[2-3 sentences with specific evidence/risks]
-
-**The Scalac Angle:**
-[2-3 sentences. Our expert take. Challenge both sides if needed. Concrete recommendation.]
+• **[Topic 1]** — [One line description]  
+• **[Topic 2]** — [One line description]  
+• **[Topic 3]** — [One line description]
 
 ---
 
-##### **SECTION 2: NOTES FROM THE TRENCHES**
+## The Architecture Debate: [Title]
 
-## **[Title of production problem]**
+![Image if applicable](/images/blog/...)
 
-[Context: Scale, constraints, stakes. 2-3 sentences.]
+**[Bold hook]:** [2-3 sentences with specific evidence/metrics]
+**[Bold hook]:** [2-3 sentences with specific evidence/risks]
 
-**The Problem:**
-[Specific symptoms, errors, metrics]
-
-**The Solution:**
-[Step-by-step fix with code/commands if applicable]
-
-**The Lesson:**
-[Why this matters beyond this specific case]
+**Scalac angle:** [2-3 sentences. Concrete recommendations. Challenge both sides.]
 
 ---
 
-##### **SECTION 3: SIGNAL OVER NOISE**
+## Notes from the Trenches: [Title]
 
-## **Three critical changes this month**
+![Image if applicable](/images/blog/...)
 
-**1. [Bold headline]:** [2-3 sentences. What changed + why it matters + migration path.]
+**[Bold hook - The Problem]:** [Specific symptoms, errors, metrics]
+**[Bold hook - The Solution]:** [Step-by-step fix with code/commands]
 
-**2. [Bold headline]:** [Same format]
-
-**3. [Bold headline]:** [Same format]
-
----
-
-##### **IN THE KNOW**
-
-## **What's trending on X, HN, and engineering blogs**
-
-* **[Bold topic]:** [One sentence]. [Source: X/HN/Threads with engagement metric]
-* **[Bold topic]:** [One sentence]. [Source]
-* **[Bold topic]:** [One sentence]. [Source]
-* **[Bold topic]:** [One sentence]. [Source]
+**Scalac angle:** [Concrete recommendation. What to do in production.]
 
 ---
 
-##### **TOP & TRENDING RESOURCES**
+## Signal Over Noise: Three Critical Changes This Month
 
-### **Tutorial of the Month**
+### 1. [Bold headline]
+[2-3 sentences. What changed + why it matters + migration path.]
 
-**[Title](URL):** [One sentence: what it teaches, who it's for, why it stands out.]
+### 2. [Bold headline]
+[Same format]
 
----
-
-### **Repo of the Month**
-
-**[Project Name](URL):** [One sentence: what it does, tech stack, why it matters now.]
-
----
-
-### **Paper of the Month**
-
-**[Paper Title](URL):** [One sentence: the insight and practical implication.]
+### 3. [Bold headline]
+[Same format]
 
 ---
 
-Signal is published by Scalac. We build distributed systems for teams who ship.
+## In the Know
 
-**Want deeper analysis?** Explore our case studies at scalac.io/case-studies  
-**Subscribe:** Receive The Distributed Pulse monthly by signing up at scalac.io/newsletter
+**[Name]** [linked] — [One sentence with source]. [Engagement metric if available].
+
+---
+
+## Top Resources
+
+**Repo:** [link] — [description]
+**Paper:** [link] — [description]
+
+---
+
+*Signal is published by [Scalac](https://scalac.io).*
+
+**What is SIGNAL?** A monthly briefing for senior engineering leaders. Three sections: 
+Architecture Debate, Notes from the Trenches, Signal Over Noise. No hype. No vendor pitches. 
+Just lessons that matter.
+
+---
+
+## References
+
+- [Source 1](URL)
+- [Source 2](URL)
 ```
+
+---
+
+## Images and Visuals
+
+### Hero Images from Blogs (priority)
+Always check if the blog post has a hero image. Use it instead of generic logos:
+
+1. **Confluent/Kafka blogs:**
+   - Check `<meta property="og:image">` or first large image
+   - URL pattern: `https://images.ctfassets.net/...`
+   - Example: `curl -s "https://www.confluent.io/blog/POST-URL/" | grep -o 'https://images.ctfassets.net[^"]*'`
+
+2. **Scala blogs:**
+   - scala-lang.org: `https://www.scala-lang.org/resources/img/scala-spiral-3d-2-toned-down.png`
+   - Check `<meta property="og:image">`
+
+3. **GitHub repos:**
+   - Use repo owner's avatar or social preview
+   - URL: `https://avatars.githubusercontent.com/u/[USER_ID]`
+
+### Image placement in markdown:
+```markdown
+![Alt text](/images/blog/filename.png)
+*Caption: opis*
+
+**Bold hook:** Rest of paragraph...
+```
+
+### Required images per issue:
+- Header: Hero image from main source blog (1200x627px)
+- 1-2 section images (logos or diagrams) - optional
+- Image path format: `/images/blog/signal-[month]-[year]-[topic].png`
+
+---
 
 ## Writing Rules (Stop-Slop)
 
@@ -187,7 +297,7 @@ Signal is published by Scalac. We build distributed systems for teams who ship.
 - **Active voice only**: "The team migrated" not "The migration was completed"
 - **No passive constructions**
 - **No binary contrasts**: Never "not X, it's Y" - state Y directly
-- **No em-dashes**: Ever
+- **No em-dashes**: Ever. Use periods or hyphens.
 - **Varied rhythm**: Mix sentence lengths. Two items beat three.
 - **Specific over vague**: "p99 dropped from 15s to 100ms" not "latency improved"
 
@@ -196,6 +306,8 @@ Signal is published by Scalac. We build distributed systems for teams who ship.
 - No lazy extremes: "every", "always", "never"
 - Put the reader in the room: "You" beats "People"
 
+---
+
 ## Section Guidelines
 
 ### SECTION 1: THE ARCHITECTURE DEBATE
@@ -203,18 +315,42 @@ Signal is published by Scalac. We build distributed systems for teams who ship.
 - Both sides have valid points
 - End with Scalac Angle (expert synthesis)
 - Technical depth + business implications
+- Bold hooki dla każdej strony argumentu
 
-### SECTION 2: NOTES FROM THE TRENCHES  
+### SECTION 2: NOTES FROM THE TRENCHES
 - Concrete problem (error messages, metrics)
 - Production context (scale, constraints)
 - Actionable solution
 - Transferable lesson
+- Scalac angle: co zrobić w produkcji
 
 ### SECTION 3: SIGNAL OVER NOISE
 - Exactly 3 items
 - Breaking changes, deprecations, major shifts only
 - Each: What + Why it matters + Migration path
 - Skip: minor features, patch releases, betas
+
+---
+
+## Pre-publish Checklist
+
+- [ ] "Welcome back." lub "Welcome to SIGNAL." w introduction (zgodnie z issue number)
+- [ ] "Also:" z 2 teaserami
+- [ ] "Today" - 4-5 bullet points
+- [ ] 3 sekcje: Debate, Trenches, Signals
+- [ ] Każda sekcja Debate/Trenches ma "Scalac angle" (konkretna rekomendacja)
+- [ ] Signal Over Noise: dokładnie 3 punkty
+- [ ] In the Know: 4-5 social/trending items
+- [ ] Top Resources: Repo + Paper (+ opcjonalnie Tutorial)
+- [ ] Wszystkie linki są konkretne (nie ogólne "x.com/karpathy")
+- [ ] Obrazki: min 1 hero, opcjonalnie 1-2 sekcje
+- [ ] Issue number w headerze
+- [ ] Format "The Code": krótkie akapity, bold hooki, metryki
+- [ ] Bez em-dash, bez throat-clearers, bez passive voice
+- [ ] Frontmatter z title, description, tags, image
+- [ ] Sekcja References na końcu
+
+---
 
 ## Quality Scoring
 
@@ -228,12 +364,41 @@ Score 1-10 (minimum 35/50 required):
 | Actionable | Can reader act on this? |
 | Density | Anything cuttable? |
 
+---
+
+## Example: Complete Architecture Debate Section
+
+```markdown
+## The Architecture Debate: Diskless Kafka
+
+![Apache Kafka 4.2.0 Release](/images/blog/signal-march-2026-kafka.png)
+*Apache Kafka 4.2.0 brings production-ready Share Groups.*
+
+**Apache Kafka approves KIP-1150.** Diskless topics are now officially on the 
+Apache Kafka roadmap. The community voted yes on March 2nd, accepting a leaderless 
+architecture where brokers serve partitions directly from object storage. 
+The catch: production readiness is 2027 at earliest.
+
+**Confluent acquired WarpStream in January.** The proprietary fork already delivers 
+80% cost reductions for log analytics workloads. Robinhood runs 10+ TB/day through it. 
+Latency penalty remains 100-500ms — fine for logs, unacceptable for transactions 
+requiring sub-50ms p99.
+
+**Scalac angle:** Greenfield without latency constraints? WarpStream under Confluent's 
+umbrella carries less operational risk than betting on 2027 timelines. Existing Kafka 
+estates? Wait for KIP-1150. The decision isn't which technology; it's your organization's 
+tolerance for vendor lock-in versus timeline uncertainty.
+```
+
+---
+
 ## Output
 
 Generate:
 1. **Newsletter draft** in Markdown
 2. **Sources used** - brief list
 3. **Skipped sources** - rejected signals (for reference)
+4. **Images list** - what images to include with sources
 
 Do NOT:
 - Include conference events (CFPs, ticket sales)
