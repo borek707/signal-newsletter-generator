@@ -1,58 +1,65 @@
 ---
-title: "SIGNAL March 2026: Diskless Kafka, Share Groups, and the MCP Backlash"
-description: "Monthly briefing for CTOs and Senior Architects. KIP-1150 makes diskless Kafka official, Kafka 4.2 graduates Share Groups, and the MCP protocol faces an identity crisis."
+title: "SIGNAL March 2026: Akka's MCP Bet vs Perplexity's Fold, Diskless Kafka, and Share Groups"
+description: "Monthly briefing for CTOs and Senior Architects. Akka launches Agentic AI on MCP the same week Perplexity dumps it. Plus KIP-1150 makes diskless Kafka official and Kafka 4.2 graduates Share Groups."
 author: "Scalac Engineering Team"
 date: "2026-03-30"
 tags: ["distributed-systems", "kafka", "scala", "rust", "mcp", "engineering-leadership"]
-image: "/images/blog/signal-march-2026-kafka.png"
+image: "/images/blog/signal-march-2026-akka.png"
 ---
 
 # SIGNAL: What matters in distributed systems
 
 **March 2026 | Issue #1**
 
-![Apache Kafka 4.2.0 Release](/images/blog/signal-march-2026-kafka.png)
-*Apache Kafka 4.2.0 brings production-ready Share Groups — finally breaking the partition-to-consumer limit.*
+![Akka Agentic AI](/images/blog/signal-march-2026-akka.png)
+*Akka launches Agentic AI platform built on MCP — the same week Perplexity's CTO publicly dumps the protocol.*
 
-**Welcome to SIGNAL.** This is a monthly briefing for CTOs, VP Engineering, and Chief Architects running distributed systems at scale. We don't aggregate news. We aggregate lessons. 
+**Welcome to SIGNAL.** This is a monthly briefing for CTOs, VP Engineering, and Chief Architects running distributed systems at scale. We don't aggregate news. We aggregate lessons.
 
 Every month: one architecture debate with real trade-offs, one production war story with solutions, and three critical signals with business context. No hype cycles. No vendor pitches. Just what you need to know to make better infrastructure decisions.
 
-**Also this month:** Kafka 4.2 ships Share Groups that finally break the partition-to-consumer limit. The MCP protocol faces an identity crisis as Perplexity's CTO dumps it. And Mill 1.0 emerges as a genuine sbt alternative.
+**This month:** Akka launches an Agentic AI platform built entirely on MCP — the same week Perplexity's CTO publicly dumps the protocol. The MCP backlash intensifies as the dev world argues whether it's enterprise governance or unnecessary overhead.
 
 ---
 
 ## Today
 
+• **[Akka launches Agentic AI](https://akka.io/blog/announcing-akkas-agentic-ai-release)** on MCP — the same week Perplexity's CTO dumps the protocol  
 • **[KIP-1150](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1150%3A+Diskless+Topics)** makes diskless Kafka official — two paths to S3-backed streaming converge  
 • **[Kafka 4.2](https://kafka.apache.org/downloads#4.2.0)** graduates Share Groups — scale consumers by workload, not partition count  
 • **[Scala 3.8](https://www.scala-lang.org/news/3.8/)** locks in JDK 17, 3.9 LTS approaches with the same floor  
-• **MCP backlash** intensifies — [Akka](https://akka.io/blog/announcing-akkas-agentic-ai-release) doubles down, Perplexity folds  
 • **[Mill 1.0](https://github.com/com-lihaoyi/mill/releases/tag/1.0.0)** ships — 3-6x faster builds than sbt
 
 ---
 
-## The Architecture Debate: Diskless Kafka
+## The Architecture Debate: MCP Protocol — Enterprise Governance or Overhead?
+
+**[Akka launches Agentic AI](https://akka.io/blog/announcing-akkas-agentic-ai-release)** in March 2026. Lightbend, now rebranded as Akka, shipped four new components: Orchestration for multi-agent workflows, Agents with MCP tool support, Memory as durable sharded state, and Streaming for real-time AI processing. All included in existing licenses. The positioning is direct — they're going after LangChain and LlamaIndex with enterprise SLAs.
+
+**The same week, Perplexity's CTO dumps MCP.** Denis Yarats announced at Ask 2026 they're replacing MCP with direct APIs and CLIs. The criticism is operational, not theoretical: MCP tool definitions consume context window (10-50x more tokens than CLI equivalents), auth is clunky, and the protocol adds abstraction over APIs that already exist.
+
+**The divide nobody is talking about:** MCP runs in two modes. Stdio (local) keeps the server on your machine. Remote HTTP puts it on a centralized server. The backlash conflates both. Centralized MCP gives teams one place to manage auth, track tools, and keep prompts consistent. CLIs run as you — your credentials, your permissions, no audit trail. For one developer on their laptop, fine. For 50 engineers touching production, terrifying.
+
+**Scalac angle:** The framing is wrong. It's not "MCP or CLI" — it's governance versus speed. Internal tooling with fixed integrations and solo developers? CLIs are faster and cheaper. Multi-tenant enterprise environments needing centralized auth, observability, and audit trails? MCP earns its overhead. Smart teams use CLIs where the model already understands the tool, MCP where they need unified governance. The protocol got overhyped early, but its real story was always enterprise adoption.
+
+🔗 [Akka Agentic AI Announcement](https://akka.io/blog/announcing-akkas-agentic-ai-release) · [Perplexity MCP Discussion](https://news.ycombinator.com/item?id=43345612)
+
+---
+
+## Notes from the Trenches: Kafka 4.2 — Diskless Topics and Share Groups
 
 ![Apache Kafka](images/kafka-hero-confluent.png)
 *Hero image from Confluent blog — Apache Kafka 4.2.0 release*
 
-**Apache Kafka approves [KIP-1150](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1150%3A+Diskless+Topics).** Diskless topics are now officially on the Apache Kafka roadmap. The community voted yes on March 2nd, accepting a leaderless architecture where brokers serve partitions directly from object storage. 
+**Apache Kafka approves [KIP-1150](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1150%3A+Diskless+Topics).** The community voted yes on March 2nd, making diskless topics officially part of the roadmap. Brokers serve partitions directly from object storage using a leaderless architecture.
 
-The catch: production readiness is 2027 at earliest. KIP-1164 (Batch Coordinator) and several sub-proposals still need implementation.
+The catch: production readiness is 2027 at earliest. KIP-1164 (Batch Coordinator) and sub-proposals still need implementation.
 
-**Confluent acquired WarpStream in January.** The proprietary fork already delivers 80% cost reductions for log analytics workloads. Robinhood runs 10+ TB/day through it. Latency penalty remains 100-500ms — fine for logs, unacceptable for transactions requiring sub-50ms p99.
+**Confluent acquired WarpStream in January.** The proprietary fork already delivers 80% cost reductions for log analytics. Robinhood runs 10+ TB/day through it. Latency remains 100-500ms — fine for logs, unacceptable for sub-50ms p99 transactions.
 
-**The debate nobody is framing correctly:** This isn't open source versus proprietary. It's vendor lock-in today versus migration complexity tomorrow. KIP-1150 offers gradual, topic-by-topic migration. WarpStream requires ripping out brokers entirely. Greenfield teams face a real choice. Existing estates should probably wait.
+**The migration decision:** KIP-1150 offers gradual, topic-by-topic migration. WarpStream requires ripping out brokers entirely. Greenfield teams choose between vendor lock-in today (WarpStream works now) versus migration complexity tomorrow (KIP-1150 is 2027).
 
-**Scalac angle:** Greenfield without latency constraints? WarpStream under Confluent's umbrella carries less operational risk than betting on 2027 timelines. Existing Kafka estates? Wait for KIP-1150. Running both systems is what you're trying to escape. The decision isn't which technology; it's your organization's tolerance for vendor lock-in versus timeline uncertainty.
-
----
-
-## Notes from the Trenches: How Kafka 4.2 Share Groups Change Everything
-
-![Scala 3.8](images/scala-hero.png)
-*Hero image from scala-lang.org — Scala 3.8 release*
+**Scalac angle:** Existing Kafka estates should wait for KIP-1150. Running both systems defeats the purpose. Greenfield without latency constraints? WarpStream carries less risk than betting on 2027 timelines. The decision is organizational tolerance for vendor lock-in versus timeline uncertainty — not which technology is "better."
 
 **The partition-to-consumer binding has been Kafka's fundamental scaling constraint since 2011.**
 
@@ -76,11 +83,9 @@ With 4.2.0, [KIP-932](https://cwiki.apache.org/confluence/display/KAFKA/KIP-932%
 
 The 3.3 LTS line continues supporting JDK 8 until Q2 2027, but all new development requires JDK 17 minimum. For library authors: cross-compile to 3.3 LTS if you need JDK 8 compatibility; otherwise target 3.8+ with JDK 21 LTS for optimal performance.
 
-### 2. Akka launches Agentic AI as the MCP backlash intensifies
+### 2. Mill 1.0 ships as viable sbt alternative
 
-**Launched March 2026.** Lightbend (rebranded Akka) shipped Orchestration, Agents with MCP support, and Memory components in March. The same week, Perplexity CTO Denis Yarats announced at Ask 2026 they're replacing MCP with direct APIs and CLIs, citing context window overhead.
-
-The divide: MCP solves enterprise governance (auth, observability, audit trails) that CLI wrappers can't; but for internal tooling with fixed integrations, the protocol overhead is measurable (10-50x token usage versus direct APIs). Akka's bet on MCP targets enterprise multi-tenant environments exactly where the protocol earns its weight.
+**Released March 2026.** The Scala build tool promises 3-6x faster builds than sbt through aggressive caching and parallelization. Native launchers reduce startup to ~100ms. Full Scala Native support and Kotlin interoperability make it a genuine alternative for teams struggling with sbt complexity.
 
 ### 3. Microsoft's C/C++ elimination goal is research, not roadmap
 
@@ -94,7 +99,7 @@ Practical takeaway: inventory modules by exploit history and test coverage befor
 
 **Andrej Karpathy** · **March 2026** · on the [No Priors podcast](https://www.youtube.com/@NoPriorsPodcast) noted he hasn't typed a line of code since December 2025 — "everything is vibes coding with LLMs now." The shift from 80% manual/20% AI to 20% manual/80% AI happened within one month. [2.5M views](https://x.com/saranormous/status/2035080458304987603).
 
-**[Mill 1.0.0](https://github.com/com-lihaoyi/mill/releases/tag/1.0.0)** · **March 2026** · released — the Scala build tool promises 3-6x faster builds than sbt through aggressive caching and parallelization. Native launchers reduce startup to ~100ms. Full Scala Native support and Kotlin interoperability.
+**JDK 25 LTS** · **September 2025** · enters Rampdown Phase One. This is the version that will drive the next wave of JVM ecosystem migrations. Scala 3.8 already supports it. Teams planning 2026 infrastructure should target JDK 21 LTS now, with JDK 25 as the next hop.
 
 **[Apache Pekko 1.1.0](https://pekko.apache.org/)** · **March 2026** — the Apache Foundation's fork of Akka continues maturing as the truly open-source alternative for actor-based distributed systems. With Akka doubling down on proprietary agentic AI features under BSL, Pekko becomes the conservative choice for new JVM distributed systems without license uncertainty.
 
