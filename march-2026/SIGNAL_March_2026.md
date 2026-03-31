@@ -42,7 +42,7 @@ Every month: one architecture debate with real trade-offs, one production war st
 
 **Scalac angle:** the framing of "MCP vs CLI" is wrong. The real axis is governance versus speed. If you're building internal tools with a handful of fixed integrations and a small team, classic APIs and CLIs are faster to wire up and cheaper to run. In multi-tenant enterprise environments that need centralized auth, observability, and audit trails, MCP starts to earn its overhead. Smart teams don't pick "MCP or CLI" – they use CLIs where the model already understands the tool, and MCP where they need a unified, controlled access layer. The protocol was overhyped early on, but its real story was always enterprise adoption, not the solo dev hacking on a laptop.
 
-🔗 [Akka Agentic AI Announcement](https://akka.io/blog/announcing-akkas-agentic-ai-release) · [Perplexity MCP Discussion](https://news.ycombinator.com/item?id=43345612)
+🔗 [Manulife Selects Akka to Operationalize Agentic AI](https://finance.yahoo.com/news/manulife-selects-akka-operationalize-agentic-120000522.html) · [Perplexity: MCP vs APIs for AI Agents](https://www.junia.ai/blog/perplexity-mcp-vs-apis-ai-agents) · [Perplexity Agent API MCP Shift](https://awesomeagents.ai/news/perplexity-agent-api-mcp-shift/)
 
 ---
 
@@ -139,6 +139,9 @@ Practical takeaway: inventory modules by exploit history and test coverage befor
 - [Apache Kafka 4.2.0 Release Notes](https://kafka.apache.org/downloads#4.2.0)
 - [KIP-932: Queues for Kafka](https://cwiki.apache.org/confluence/display/KAFKA/KIP-932%3A+Queues+for+Kafka)
 - [Scala 3.8 Release](https://www.scala-lang.org/news/3.8/)
+- [Manulife Selects Akka to Operationalize Agentic AI](https://finance.yahoo.com/news/manulife-selects-akka-operationalize-agentic-120000522.html)
+- [Perplexity: MCP vs APIs for AI Agents](https://www.junia.ai/blog/perplexity-mcp-vs-apis-ai-agents)
+- [Perplexity Agent API MCP Shift](https://awesomeagents.ai/news/perplexity-agent-api-mcp-shift/)
 - [Akka Agentic AI Announcement](https://akka.io/blog/announcing-akkas-agentic-ai-release)
 - [Mill 1.0 Release](https://github.com/com-lihaoyi/mill/releases/tag/1.0.0)
 - [Apache Pekko](https://pekko.apache.org/)
