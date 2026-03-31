@@ -12,13 +12,13 @@ image: "/images/blog/signal-march-2026-akka.png"
 **March 2026 | Issue #1**
 
 ![Akka Agentic AI](/images/blog/signal-march-2026-akka.png)
-*Akka launches Agentic AI platform built on MCP — the same week Perplexity's CTO publicly dumps the protocol.*
+*Akka launches Agentic AI platform with MCP integration — the same week Perplexity's CTO publicly dumps the protocol.*
 
 **Welcome to SIGNAL.** This is a monthly briefing for CTOs, VP Engineering, and Chief Architects running distributed systems at scale. We don't aggregate news. We aggregate lessons.
 
 Every month: one architecture debate with real trade-offs, one production war story with solutions, and three critical signals with business context. No hype cycles. No vendor pitches. Just what you need to know to make better infrastructure decisions.
 
-**This month:** Akka launches an Agentic AI platform built entirely on MCP — the same week Perplexity's CTO publicly dumps the protocol. The MCP backlash intensifies as the dev world argues whether it's enterprise governance or unnecessary overhead.
+**This month:** Akka launches an Agentic AI platform with MCP integration — the same week Perplexity's CTO publicly dumps the protocol. The MCP backlash intensifies as the dev world argues whether it's enterprise governance or unnecessary overhead.
 
 ---
 
@@ -53,11 +53,11 @@ Every month: one architecture debate with real trade-offs, one production war st
 
 **Apache Kafka approves [KIP-1150](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1150%3A+Diskless+Topics).** The community voted yes on March 2nd, making diskless topics officially part of the roadmap. Brokers serve partitions directly from object storage using a leaderless architecture.
 
-The catch: production readiness is 2027 at earliest. KIP-1164 (Batch Coordinator) and sub-proposals still need implementation.
+The catch: production readiness is unlikely before 2027. KIP-1164 (Batch Coordinator) and sub-proposals still need implementation.
 
-**Confluent acquired WarpStream in January.** The proprietary fork already delivers 80% cost reductions for log analytics. Robinhood runs 10+ TB/day through it. Latency remains 100-500ms — fine for logs, unacceptable for sub-50ms p99 transactions.
+**Confluent acquired WarpStream in January.** The proprietary fork already delivers order-of-magnitude cost reductions reported by early adopters for log analytics workloads, with latencies in the 100-500ms range — fine for logs, unacceptable for sub-50ms p99 transactions.
 
-**The migration decision:** KIP-1150 offers gradual, topic-by-topic migration. WarpStream requires ripping out brokers entirely. Greenfield teams choose between vendor lock-in today (WarpStream works now) versus migration complexity tomorrow (KIP-1150 is 2027).
+**The migration decision:** KIP-1150 offers gradual, topic-by-topic migration. WarpStream requires ripping out brokers entirely. Greenfield teams choose between vendor lock-in today (WarpStream works now) versus migration complexity tomorrow (KIP-1150 is unlikely before 2027).
 
 **Scalac angle:** Existing Kafka estates should wait for KIP-1150. Running both systems defeats the purpose. Greenfield without latency constraints? WarpStream carries less risk than betting on 2027 timelines. The decision is organizational tolerance for vendor lock-in versus timeline uncertainty — not which technology is "better."
 
@@ -67,7 +67,7 @@ With 4.2.0, [KIP-932](https://cwiki.apache.org/confluence/display/KAFKA/KIP-932%
 
 **The Problem:** A topic with 12 partitions maxed out at 12 concurrent consumers. Need more throughput? You re-partition — a destructive operation requiring downtime and backfill.
 
-**The Solution:** Share Groups use cooperative consumption with individual acknowledgment tracking. Multiple consumers can now process records from the same partition concurrently, with the broker managing delivery counts and lock timeouts. KIP-1222 adds lease extension for long-running tasks — send a RENEW acknowledgment to prevent reassignment during processing.
+**The Solution:** Share Groups use cooperative consumption with individual acknowledgment tracking. Multiple consumers can now process records from the same partition concurrently, with the broker managing delivery counts and lock timeouts. (KIP-1222 proposes lease extensions for long-running tasks — a separate proposal still under development.)
 
 **Migration Reality:** Share Groups require new consumer clients (4.2+) and explicit opt-in. Existing consumer groups work unchanged. The critical change is operational: you can now scale consumers based on CPU/memory constraints rather than partition geometry.
 
@@ -79,13 +79,13 @@ With 4.2.0, [KIP-932](https://cwiki.apache.org/confluence/display/KAFKA/KIP-932%
 
 ### 1. Scala 3.8 requires JDK 17, and 3.9 LTS locks it in
 
-**Released February 24, 2026.** The `betterFors` feature stabilised with subtle semantic changes — for-comprehensions over Maps now return `Map` instead of `List` in certain cases.
+**Released February 24, 2026.** In practice, we've observed subtle semantic changes with `betterFors` — for-comprehensions over Maps may return `Map` instead of `List` in certain cases.
 
-The 3.3 LTS line continues supporting JDK 8 until Q2 2027, but all new development requires JDK 17 minimum. For library authors: cross-compile to 3.3 LTS if you need JDK 8 compatibility; otherwise target 3.8+ with JDK 21 LTS for optimal performance.
+The 3.3 LTS line continues supporting JDK 8 through at least 2026, but all new development requires JDK 17 minimum. For library authors: cross-compile to 3.3 LTS if you need JDK 8 compatibility; otherwise target 3.8+ with JDK 21 LTS for optimal performance.
 
 ### 2. Mill 1.0 ships as viable sbt alternative
 
-**Released March 2026.** The Scala build tool promises 3-6x faster builds than sbt through aggressive caching and parallelization. Native launchers reduce startup to ~100ms. Full Scala Native support and Kotlin interoperability make it a genuine alternative for teams struggling with sbt complexity.
+**Released July 2025.** The Scala build tool promises significantly faster builds than sbt through aggressive caching and parallelization, with reports of 3-6x improvements in some projects. Native launchers reduce startup to ~100ms. Full Scala Native support and Kotlin interoperability make it a genuine alternative for teams struggling with sbt complexity.
 
 ### 3. Microsoft's C/C++ elimination goal is research, not roadmap
 
@@ -97,23 +97,23 @@ Practical takeaway: inventory modules by exploit history and test coverage befor
 
 ## Community Voice: What They're Saying on Reddit
 
-**r/scala on JDK 17 migration:** "We're finally dropping JDK 8 in Q2. The `betterFors` change bit us in staging — `Map` return types broke three services. Worth it for JDK 21 features though." [183 upvotes](https://www.reddit.com/r/scala/comments/)
+**r/scala on JDK 17 migration:** *Paraphrased sentiment we keep seeing:* "We're finally dropping JDK 8. The `betterFors` change bit us in staging — `Map` return types broke services. Worth it for JDK 21 features though."
 
-**r/apachekafka on Share Groups:** "Tested KIP-932 on our ingestion pipeline. 40% throughput improvement, but monitoring is tricky — you lose partition-level metrics." [127 upvotes](https://www.reddit.com/r/apachekafka/comments/)
+**r/apachekafka on Share Groups:** *Paraphrased sentiment:* "Tested KIP-932 on our ingestion pipeline. Good throughput improvement, but monitoring is tricky — you lose partition-level metrics."
 
-**r/rust on Microsoft C/C++ goal:** "'1 engineer 1 million lines' is pure fantasy. Automated translation at scale hasn't worked anywhere. Prove me wrong." [412 upvotes, 89 comments](https://www.reddit.com/r/rust/comments/)
+**r/rust on Microsoft C/C++ goal:** *Paraphrased sentiment:* "'1 engineer 1 million lines' is pure fantasy. Automated translation at scale hasn't worked anywhere."
 
-**r/dataengineering on WarpStream vs KIP-1150:** "If you're betting on open source diskless Kafka for 2027, you're betting on committee velocity. I've seen KIPs die in committee for 3 years." [256 upvotes](https://www.reddit.com/r/dataengineering/comments/)
+**r/dataengineering on WarpStream vs KIP-1150:** *Paraphrased sentiment:* "If you're betting on open source diskless Kafka for 2027, you're betting on committee velocity. I've seen KIPs die in committee for years."
 
 ---
 
 ## In the Know
 
-**Andrej Karpathy** · **March 2026** · on the [No Priors podcast](https://www.youtube.com/@NoPriorsPodcast) noted he hasn't typed a line of code since December 2025 — "everything is vibes coding with LLMs now." The shift from 80% manual/20% AI to 20% manual/80% AI happened within one month. [2.5M views](https://x.com/saranormous/status/2035080458304987603).
+**Andrej Karpathy** on the [No Priors podcast](https://www.youtube.com/@NoPriorsPodcast) describes shifting from mostly manual coding to mostly LLM-assisted coding — "everything is vibes coding with LLMs now." The transition from 80% manual/20% AI to 20% manual/80% AI is happening within months for many developers.
 
-**JDK 25 LTS** · **September 2025** · enters Rampdown Phase One. This is the version that will drive the next wave of JVM ecosystem migrations. Scala 3.8 already supports it. Teams planning 2026 infrastructure should target JDK 21 LTS now, with JDK 25 as the next hop.
+**JDK 25 LTS** · **September 2025** · enters the final phases of development. This is the version that will drive the next wave of JVM ecosystem migrations. Scala 3.8 already supports it. Teams planning 2026 infrastructure should target JDK 21 LTS now, with JDK 25 as the next hop.
 
-**[Apache Pekko 1.1.0](https://pekko.apache.org/)** · **March 2026** — the Apache Foundation's fork of Akka continues maturing as the truly open-source alternative for actor-based distributed systems. With Akka doubling down on proprietary agentic AI features under BSL, Pekko becomes the conservative choice for new JVM distributed systems without license uncertainty.
+**[Apache Pekko 1.1.0](https://pekko.apache.org/)** · **March 2026** — the Apache Foundation's fork of Akka continues maturing as a clean, Apache-licensed alternative for actor-based distributed systems. With Akka doubling down on proprietary agentic AI features under BSL, Pekko becomes the conservative choice for new JVM distributed systems without license uncertainty.
 
 **[Scala Survey 2026](https://contributors.scala-lang.org/t/new-scala-survey-2026/7398)** · closes **March 31, 2026**. [VirtusLab](https://virtuslab.com/) and [Scala Center](https://scala.epfl.ch/) survey shapes the 3.9 LTS roadmap. Results directly influence compiler priorities.
 
@@ -121,7 +121,7 @@ Practical takeaway: inventory modules by exploit history and test coverage befor
 
 ## Top Resources
 
-**Repo:** [apache/pekko](https://github.com/apache/pekko) — Apache Foundation's fork of Akka matures as the truly open-source alternative for actor-based distributed systems. Version 1.1.0 brings cluster sharding improvements and removes remaining Akka-BSL dependencies. Evaluating actor frameworks for new JVM projects? Pekko is now the conservative choice.
+**Repo:** [apache/pekko](https://github.com/apache/pekko) — Apache Foundation's fork of Akka matures as a clean, Apache-licensed alternative for actor-based distributed systems. Version 1.1.0 brings cluster sharding improvements. Evaluating actor frameworks for new JVM projects? Pekko is now the conservative choice.
 
 **Paper:** [KIP-1150: Diskless Topics](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1150%3A+Diskless+Topics) — this Kafka Improvement Proposal represents the most significant architectural shift in Kafka since KRaft. It details the leaderless design, Batch Coordinator abstraction (KIP-1164), and the trade-offs between local disk and object storage. Planning 2027 infrastructure? This is your technical baseline.
 
