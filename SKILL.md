@@ -292,6 +292,7 @@ Always check if the blog post has a hero image. Use it instead of generic logos:
 - All adverbs: "importantly", "significantly", "effectively", "efficiently"
 - Vague declaratives: "The reasons are structural", "The implications are significant"
 - Meta-commentary: "As mentioned earlier", "In conclusion", "To summarize"
+- Absolute claims without proof: "entirely", "completely", "all", "removes all", "guarantees"
 
 ### Structural Rules
 - **Active voice only**: "The team migrated" not "The migration was completed"
@@ -352,6 +353,71 @@ Always check if the blog post has a hero image. Use it instead of generic logos:
 
 ---
 
+## Fact-Check Guidelines (Verification Rules)
+
+Based on March 2026 issue corrections. Apply to all future issues:
+
+### 1. Release Dates - Verify, Don't Assume
+- **ALWAYS** check actual release date in GitHub releases, blog posts, or official announcements
+- **NEVER** assume "Released this month" - verify the date
+- **Example correction:** Mill 1.0 was July 2025, not March 2026
+- **Example correction:** Akka Agentic Platform was announced in 2025, not launched in March 2026
+
+### 2. Metrics and Numbers - Source or Soften
+- **Concrete numbers require concrete sources**
+- ❌ BAD: "80% cost reductions", "10+ TB/day", "3-6x faster"
+- ✅ GOOD: "order-of-magnitude cost reductions reported by early adopters", "significantly faster... with reports of 3-6x in some projects"
+- **If no public source:** Use "reportedly", "according to early adopters", or remove the number
+- **Never invent metrics** (views, upvotes, engagement numbers)
+
+### 3. Reddit Quotes - Paraphrase or Link
+- **Specific upvote counts require specific thread links**
+- ❌ BAD: "[183 upvotes](https://www.reddit.com/r/scala/comments/)" (link to subreddit, not thread)
+- ✅ GOOD: "*Paraphrased sentiment we keep seeing:* 'quote...'" OR link to specific thread with real count
+- **When in doubt:** Mark as "Paraphrased sentiment from r/[subreddit]"
+
+### 4. Future Dates - Estimate, Don't Promise
+- **Roadmap dates are estimates, not facts**
+- ❌ BAD: "production readiness is 2027 at earliest"
+- ✅ GOOD: "production readiness is unlikely before 2027", "realistically a post-2026 feature"
+- **Support timelines:** "through at least 2026" instead of "until Q2 2027" (unless exact date confirmed)
+
+### 5. Technical Claims - Precision Matters
+- **Don't overstate integration/dependency:**
+  - ❌ BAD: "built entirely on MCP", "removes all BSL dependencies"
+  - ✅ GOOD: "with MCP integration", "clean Apache-licensed fork"
+- **KIPs/Proposals status:**
+  - Check if KIP is "accepted", "under discussion", or "proposed"
+  - ❌ BAD: "KIP-1222 adds lease extension" (implies implemented)
+  - ✅ GOOD: "KIP-1222 proposes lease extensions... a separate proposal under development"
+- **Observed behavior vs official feature:**
+  - ❌ BAD: "betterFors stabilised with semantic changes" (implies official)
+  - ✅ GOOD: "In practice, we've observed subtle semantic changes with betterFors"
+
+### 6. Social Media/Quotes - Verify or Generalize
+- **Specific claims need specific sources**
+- ❌ BAD: "hasn't typed code since December 2025 — 2.5M views"
+- ✅ GOOD: "describes shifting from mostly manual coding to mostly LLM-assisted coding"
+- **Remove:** Exact dates, view counts, engagement metrics unless verified with link
+
+### 7. Companies/Case Studies
+- **Verify public case studies:**
+  - Robinhood + WarpStream: removed because no public source
+  - Manulife + Akka: kept with direct link to press release
+- **When mentioning companies:** Link to official announcement, not "reportedly"
+
+### Pre-publish Verification Checklist
+- [ ] All release dates verified against GitHub/blog sources
+- [ ] All metrics either sourced or softened with "reportedly"/"early adopters"
+- [ ] Reddit quotes either link to specific threads OR marked as "paraphrased"
+- [ ] Future roadmap dates use "unlikely before" or "post-YYYY" not exact dates
+- [ ] Technical integrations use "with X support" not "built entirely on X"
+- [ ] KIPs/proposals checked for actual status (accepted vs proposed)
+- [ ] Social media claims stripped of unverified metrics (views, dates)
+- [ ] Company case studies have direct links to announcements
+
+---
+
 ## Quality Scoring
 
 Score 1-10 (minimum 35/50 required):
@@ -377,11 +443,11 @@ Score 1-10 (minimum 35/50 required):
 **Apache Kafka approves KIP-1150.** Diskless topics are now officially on the 
 Apache Kafka roadmap. The community voted yes on March 2nd, accepting a leaderless 
 architecture where brokers serve partitions directly from object storage. 
-The catch: production readiness is 2027 at earliest.
+The catch: production readiness is unlikely before 2027.
 
 **Confluent acquired WarpStream in January.** The proprietary fork already delivers 
-80% cost reductions for log analytics workloads. Robinhood runs 10+ TB/day through it. 
-Latency penalty remains 100-500ms — fine for logs, unacceptable for transactions 
+order-of-magnitude cost reductions reported by early adopters for log analytics workloads. 
+Latency remains in the 100-500ms range — fine for logs, unacceptable for transactions 
 requiring sub-50ms p99.
 
 **Scalac angle:** Greenfield without latency constraints? WarpStream under Confluent's 
