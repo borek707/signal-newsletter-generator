@@ -11,9 +11,6 @@ image: "/images/blog/signal-april-2026-ai-agents.png"
 
 **April 2026 | Issue #2**
 
-![AI Agent Orchestration](/images/blog/signal-april-2026-ai-agents.png)
-*MCP Dev Summit North America drew 1,200 attendees in April. Protocols are winning. Pilots are not.*
-
 **Welcome back.** In March we covered MCP as a protocol debate. In April the reality arrived. Claude Code hit a wall on Hacker News: 738 points, 458 comments as engineers reported regressions in complex engineering tasks. MCP and A2A protocols crossed into production maturity. The vibe coding era meets production reality.
 
 ---
@@ -33,9 +30,6 @@ image: "/images/blog/signal-april-2026-ai-agents.png"
 
 ## The Architecture Debate: AI Coding Agents — Augmentation or Throughput Trap?
 
-![AI Coding Agents](/images/blog/signal-april-2026-coding-agents.png)
-*Hacker News thread on Claude Code gathered 738 points and 458 comments in April.*
-
 **Claude Code hit a wall in April.** A Hacker News thread from early April gathered 738 points and 458 comments as developers reported major regressions after February updates. Users described crashes during refactoring, logical chaos in generated changes, and configurations so complex that teams spent more time tuning settings than writing code. Anthropic responded that the issues stem from default effort tuning and UI behavior, not model intelligence. The community split: some confirmed output regressions, others noted that high effort mode still works but requires navigating a maze of settings, env variables, slash commands, and magic keywords.
 
 **That is not a Claude-specific problem. It is an architecture problem.** Bram Cohen published "The cult of vibe coding is dogfooding run amok" in April, arguing that AI coding tools increase bad-code throughput faster than review discipline can scale. The pattern is consistent across tools: the model generates plausible-looking code that passes superficial review, then fails in integration, edge cases, or concurrency. Teams discover the debt weeks later when production metrics degrade.
@@ -47,9 +41,6 @@ image: "/images/blog/signal-april-2026-ai-agents.png"
 ---
 
 ## Notes from the Trenches: MCP and A2A Hit Production — The Governance Gap
-
-![MCP and A2A Protocols](/images/blog/signal-april-2026-protocols.png)
-*Protocols are ready. Policy is not.*
 
 **MCP and A2A protocols reached production maturity in April.** MCP crossed 97 million monthly SDK downloads. A2A v1.0 shipped with Signed Agent Cards, multi-tenancy, and gRPC. 150+ organizations support A2A. The protocols work.
 
