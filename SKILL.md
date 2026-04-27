@@ -77,12 +77,15 @@ No throat-clearing.]
 
 **Primary Sources:**
 1. **r/scala** - Scala ecosystem, FP, JVM trends
-2. **r/rust** - Systems programming, performance, safety
-3. **r/apachekafka** - Streaming, migrations, ops
-4. **r/dataengineering** - Pipelines, architecture decisions
-5. **InfoQ** - Enterprise case studies
-6. **Hacker News** - Engineering discussions
-7. **Engineering Blogs** - Reddit, Netflix, Uber, Confluent, Lightbend/Akka
+2. **This Week in Scala** ([Substack](https://thisweekinscala.substack.com/)) - Weekly Scala ecosystem roundup, releases, community news
+3. **JVM Weekly** ([jvm-weekly.com](https://www.jvm-weekly.com/)) - JVM ecosystem updates, performance, tooling
+4. **r/rust** - Systems programming, performance, safety
+5. **This Week in Rust** ([this-week-in-rust.org](https://this-week-in-rust.org/)) - Curated Rust updates, RFCs, project news
+6. **r/apachekafka** - Streaming, migrations, ops
+7. **r/dataengineering** - Pipelines, architecture decisions
+8. **InfoQ** - Enterprise case studies
+9. **Hacker News** - Engineering discussions
+10. **Engineering Blogs** - Reddit, Netflix, Uber, Confluent, Lightbend/Akka
 
 **What to look for:**
 - "Migrated from X to Y" with metrics
