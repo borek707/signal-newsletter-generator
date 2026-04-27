@@ -14,11 +14,11 @@ image: "/images/blog/signal-april-2026-ai-agents.png"
 ![AI Agent Orchestration](/images/blog/signal-april-2026-ai-agents.png)
 *MCP Dev Summit North America drew 1,200 attendees in April. Protocols are winning. Pilots are not.*
 
-**Welcome back.** In March we covered MCP as a protocol debate. In April the reality of AI coding agents arrived. A Hacker News thread on Claude Code gathered 738 points and 458 comments. Engineers [reported](https://github.com/anthropics/claude-code/issues/42796): "The February update broke refactoring workflows. I spent more time tuning settings than writing code. High effort mode helps but the configuration maze is insane." On vibe coding, Hacker News [converged](https://bramcohen.com/p/the-cult-of-vibe-coding-is-insane): "AI doesn't replace the need for architectural judgment. It just generates plausible-looking code that fails three weeks later in production." The enterprise question is no longer which protocol to use. It is whether AI coding tools augment engineers or multiply technical debt.
+**Welcome back.** In March we covered MCP as a protocol debate. In April the numbers arrived. Claude Code hit a wall on Hacker News: 738 points, 458 comments as engineers reported regressions in complex engineering tasks. The vibe coding era meets production reality.
 
 **Also:**
-- Claude Code hits a wall on Hacker News: 738 points, 458 comments on quality regressions in complex engineering
-- "Vibe coding" comes under fire as Bram Cohen argues AI increases bad-code throughput faster than review discipline scales
+- Ammonite, the Scala REPL used by half the ecosystem, is officially deprecated
+- CVE in sbt command injection patched in 1.12.9 and 2.0.0-RC12. Security teams must audit build definitions
 
 ---
 
