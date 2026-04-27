@@ -14,11 +14,7 @@ image: "/images/blog/signal-april-2026-ai-agents.png"
 ![AI Agent Orchestration](/images/blog/signal-april-2026-ai-agents.png)
 *MCP Dev Summit North America drew 1,200 attendees in April. Protocols are winning. Pilots are not.*
 
-**Welcome back.** In March we covered MCP as a protocol debate. In April the reality arrived. Claude Code hit a wall on Hacker News: 738 points, 458 comments as engineers reported regressions in complex engineering tasks. MCP and A2A protocols crossed into production maturity. The JVM ecosystem accelerated on JDK 17. The vibe coding era meets production reality.
-
-**Also:**
-- Kafka Share Groups graduate to production, but partition-level observability drops
-- Rust 1.95 ships if-let guards, reducing nested pattern matches in async code
+**Welcome back.** In March we covered MCP as a protocol debate. In April the reality arrived. Claude Code hit a wall on Hacker News: 738 points, 458 comments as engineers reported regressions in complex engineering tasks. MCP and A2A protocols crossed into production maturity. The JVM ecosystem accelerated on JDK 17 while Kafka Share Groups graduated and Rust 1.95 shipped if-let guards. The vibe coding era meets production reality.
 
 ---
 
