@@ -22,7 +22,7 @@ image: "/images/blog/signal-april-2026-ai-agents.png"
 - **[Rust 1.95.0](https://blog.rust-lang.org/2026/04/16/Rust-1.95.0.html)** stabilizes `if let` guards in match arms and `cfg_select!` for conditional compilation
 - **[JVM ecosystem accelerates on JDK 17+](https://www.scala-lang.org/)**: Scala 3.8 requires JDK 17, forcing teams to split legacy on 3.3 LTS and new projects on 3.8.x. Spring Boot virtual threads hit production but pinned carrier threads remain a real-world problem
 - **[Strimzi 0.51](https://github.com/strimzi/strimzi-kafka-operator/releases)** and **[kroxylicious 0.19.0](https://kroxylicious.io/blog/kroxylicious-proxy/releases/2026/03/04/release-0_19_0.html)** add Kafka 4.2.0 support for Kubernetes and protocol proxies
-- **[Ammonite is deprecated](https://thisweekinscala.substack.com/p/this-week-in-scala-apr-13-2026)** — the REPL that powered half the Scala ecosystem is officially unmaintained. Teams must migrate to Scala CLI or plain `scala` repl
+- **[Ammonite is deprecated](https://thisweekinscala.substack.com/p/this-week-in-scala-apr-13-2026)** — the [REPL](https://ammonite.io/) that powered half the Scala ecosystem is officially unmaintained. Teams must migrate to Scala CLI or plain `scala` repl
 - **[CVE in sbt](https://thisweekinscala.substack.com/p/this-week-in-scala-apr-20-2026)** — command injection vulnerability patched in sbt 1.12.9 and 2.0.0-RC12. Security teams should audit build definitions
 - **[Kafka 4.2.0](https://kafka.apache.org/blog/2026/02/17/apache-kafka-4.2.0-release-announcement/)** Share Groups hit production with KIP-1226 lag metrics, but partition-level observability drops
 
@@ -82,7 +82,7 @@ Practical takeaway: Deploy Share Groups for the 20% of topics that need elastic 
 
 **Rust developers** — [Linuxiac](https://linuxiac.com/rust-1-95-released-with-new-match-guards-and-stable-api-additions/) covers the 1.95.0 release: "Support for `if let` guards within match expressions... enabling additional conditional pattern checks directly in match arms." The community notes this eliminates nested pattern matching and reduces unwrap-driven crashes in async code.
 
-**Scala REPL** — [This Week in Scala](https://thisweekinscala.substack.com/p/this-week-in-scala-apr-6-2026) reports Ammonite deprecation as the top community story of April: "Ammonite is now deprecated." Teams relying on Ammonite scripts for CI and local tooling are migrating to Scala CLI. The native `scala` repl in 3.8.x is the supported path forward.
+**Scala REPL** — [This Week in Scala](https://thisweekinscala.substack.com/p/this-week-in-scala-apr-6-2026) reports [Ammonite](https://ammonite.io/) deprecation as the top community story of April: "Ammonite is now deprecated." Teams relying on Ammonite scripts for CI and local tooling are migrating to Scala CLI. The native `scala` repl in 3.8.x is the supported path forward.
 
 ---
 
