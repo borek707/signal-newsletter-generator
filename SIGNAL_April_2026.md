@@ -85,15 +85,15 @@ Practical takeaway: Deploy Share Groups for the 20% of topics that need elastic 
 
 ---
 
-## Community Voice: What They're Saying on Reddit
+## Community Voice: What We're Hearing
 
-**r/scala on JDK 17 migration:** *Paraphrased sentiment:* "JDK 17 is the real blocker. Teams are splitting: legacy stays on 3.3 LTS, new projects ship on 3.8.x. The `betterFors` breaking change stings but standardizing on one JDK is worth it."
+**Scala ecosystem** — [State of Scala 2026](https://devnewsletter.com/p/state-of-scala-2026) synthesizes migration patterns: "New services should now default to Scala 3.8.x on JDK 21 LTS, while libraries that must support JDK 8 keep cross-compiling against 3.3 LTS until 3.9 LTS lands." The report positions 3.8.2 as the bridge release where early runtime regressions are resolved.
 
-**r/java on virtual threads:** *Paraphrased sentiment:* "Spring Boot 3.5 virtual threads are in production. But one `synchronized` block pins the carrier thread and kills the whole point. We are auditing every library dependency for native locks."
+**JVM concurrency** — [Mike MyBytes](https://mikemybytes.com/2024/02/28/curiosities-of-java-virtual-threads-pinning-with-synchronized/) documents real-world virtual thread pinning: "The only reasonable way of knowing if your app is pinning-free is to actively monitor for its occurrences." Spring Boot teams hitting production with virtual threads are auditing dependencies for `synchronized` blocks and `ConcurrentHashMap` usage that pin carrier threads.
 
-**r/apachekafka on Share Groups:** *Paraphrased sentiment:* "We migrated our ingestion pipeline to Share Groups. Throughput is better, but we had to rebuild our lag alerts from scratch. Partition-level metrics are gone."
+**Kafka operations** — The [Conduktor awesome-kafka](https://github.com/conduktor/awesome-kafka) community tracks [KIP-932](https://cwiki.apache.org/confluence/display/KAFKA/KIP-932%3A+Queues+for+Kafka) adoption: "Native queue semantics via share groups: per-message acknowledgment, delivery counting, elastic scaling beyond partitions." Production teams migrating from traditional consumer groups report partition-level metrics disappear and dashboards require rebuilding.
 
-**r/rust on 1.95:** *Paraphrased sentiment:* "`if let` guards finally remove the `match` nesting nightmare in async code. Less `unwrap`, fewer panics in production."
+**Rust developers** — [Linuxiac](https://linuxiac.com/rust-1-95-released-with-new-match-guards-and-stable-api-additions/) covers the 1.95.0 release: "Support for `if let` guards within match expressions... enabling additional conditional pattern checks directly in match arms." The community notes this eliminates nested pattern matching and reduces unwrap-driven crashes in async code.
 
 ---
 
