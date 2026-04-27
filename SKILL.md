@@ -471,6 +471,57 @@ tolerance for vendor lock-in versus timeline uncertainty.
 
 ---
 
+## Lessons from April 2026 Issue
+
+### Content Architecture (what goes where and why)
+
+**Order of sections matters:**
+1. **Intro** → 4-5 sentences, narrative, no `Also:`, no bullet points. Tease the month, mention 2-3 biggest stories.
+2. **Today** → 6-8 one-line bullets, every bullet linked. This is the table of contents.
+3. **Debate** → The main story with real controversy. 3-4 bold hooks, every claim linked (HN thread, blog post, company announcement). Ends with Scalac angle.
+4. **Trenches** → Production problem + solution. Every metric and claim sourced. Ends with Scalac angle.
+5. **Signal Over Noise** → Exactly 3 critical changes. Each: what + why it matters + migration path.
+6. **Community Voice** → Synthesis from real articles/blogs, never fake Reddit threads. Every quote attributed: "[Source](link) synthesizes: 'quote'".
+7. **In the Know** → 3-5 short items. NO duplicates with Debate/Trenches. NO events (Devoxx, JavaOne → Scalendar).
+8. **Top Resources** → Repo + Tool + Paper. Each with link and one-sentence why.
+
+### Linking Strategy (every claim needs a source)
+
+| Section | What to link | Why |
+|---------|-------------|-----|
+| Today | Every bullet | Readers scan here first; every claim must be verifiable |
+| Debate | HN threads, blog posts, company announcements, people | This is the core argument; without sources it's opinion |
+| Trenches | CVE pages, release notes, technical blogs | Production claims require proof |
+| Community Voice | The article/blog being synthesized | Without attribution it's fake |
+| In the Know | Original announcement or report | Short items still need provenance |
+| Top Resources | Direct repo/paper URL | These exist to be clicked |
+
+**Deduplication rule:** If a topic appears in Debate or Trenches, it does NOT appear in In the Know or Community Voice.
+
+### What We Removed and Why
+
+| Removed | Reason | Where it went |
+|---------|--------|---------------|
+| Images in body | Distraction from text, hard to source | Removed entirely |
+| `Also:` section in intro | Duplicates Today bullets | Removed, intro stays narrative |
+| Fake Reddit quotes | No real threads found, syntetyczne | Replaced with real article synthesis |
+| HN quotes in Community Voice | Duplicates intro/Debate | Removed, kept only in Debate |
+| JPMorgan in In the Know | Duplicates Debate | Removed |
+| Bram Cohen in In the Know | Duplicates Debate | Removed |
+| State of Scala 2026 in Community Voice | Was in March issue | Removed |
+| Event announcements (Devoxx, JavaOne, MCP Summit) | Events go to Scalendar, not SIGNAL | Removed from In the Know |
+| JVM listing sentence in intro | "Kafka graduated and Rust shipped" reads like a bullet | Removed, keep intro narrative |
+
+### Substack RSS Access
+
+Substack blocks bots on the homepage. To read newsletters programmatically:
+```bash
+curl -s -L -A "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1" "https://[subdomain].substack.com/feed" | grep -oE '<link>[^<]*</link>'
+```
+Then fetch individual post URLs.
+
+---
+
 ## Output
 
 Generate:
