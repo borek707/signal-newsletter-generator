@@ -76,8 +76,6 @@ Practical takeaway: Deploy Share Groups for the 20% of topics that need elastic 
 
 ## Community Voice: What We're Hearing
 
-**Scala ecosystem** — [State of Scala 2026](https://devnewsletter.com/p/state-of-scala-2026) synthesizes migration patterns: "New services should now default to Scala 3.8.x on JDK 21 LTS, while libraries that must support JDK 8 keep cross-compiling against 3.3 LTS until 3.9 LTS lands." The report positions 3.8.2 as the bridge release where early runtime regressions are resolved.
-
 **JVM concurrency** — [Mike MyBytes](https://mikemybytes.com/2024/02/28/curiosities-of-java-virtual-threads-pinning-with-synchronized/) documents real-world virtual thread pinning: "The only reasonable way of knowing if your app is pinning-free is to actively monitor for its occurrences." Spring Boot teams hitting production with virtual threads are auditing dependencies for `synchronized` blocks and `ConcurrentHashMap` usage that pin carrier threads.
 
 **Kafka operations** — The [Conduktor awesome-kafka](https://github.com/conduktor/awesome-kafka) community tracks [KIP-932](https://cwiki.apache.org/confluence/display/KAFKA/KIP-932%3A+Queues+for+Kafka) adoption: "Native queue semantics via share groups: per-message acknowledgment, delivery counting, elastic scaling beyond partitions." Production teams migrating from traditional consumer groups report partition-level metrics disappear and dashboards require rebuilding.
@@ -89,8 +87,6 @@ Practical takeaway: Deploy Share Groups for the 20% of topics that need elastic 
 ---
 
 ## In the Know
-
-**[JPMorgan LLM Suite](https://fifthrow.com/blog/ai-agent-orchestration-goes-enterprise-the-april-2026-playbook-for-systematic-innovation-risk-and-value-at-scale)** drives reportedly 83% faster research cycles for portfolio managers and automates over 360,000 manual hours yearly, with 450+ daily production use cases. The metrics are analyst-reported rather than official disclosures.
 
 **[Scala Survey 2026](https://contributors.scala-lang.org/t/new-scala-survey-2026/7398)** closed March 31. Results from VirtusLab and Scala Center are expected in April and will directly shape Scala 3.9 LTS priorities.
 
