@@ -14,7 +14,7 @@ image: "/images/blog/signal-april-2026-ai-agents.png"
 ![AI Agent Orchestration](/images/blog/signal-april-2026-ai-agents.png)
 *MCP Dev Summit North America drew 1,200 attendees in April. Protocols are winning. Pilots are not.*
 
-**Welcome back.** In March we covered MCP as a protocol debate. In April the reality of AI coding agents arrived. A Hacker News thread on Claude Code gathered 738 points and 458 comments as developers reported regressions in complex engineering tasks. Bram Cohen called "vibe coding" dogfooding run amok. The enterprise question is no longer which protocol to use. It is whether AI coding tools augment engineers or multiply technical debt.
+**Welcome back.** In March we covered MCP as a protocol debate. In April the reality of AI coding agents arrived. A Hacker News thread on Claude Code gathered 738 points and 458 comments. Engineers [reported](https://github.com/anthropics/claude-code/issues/42796): "The February update broke refactoring workflows. I spent more time tuning settings than writing code. High effort mode helps but the configuration maze is insane." On vibe coding, Hacker News [converged](https://bramcohen.com/p/the-cult-of-vibe-coding-is-insane): "AI doesn't replace the need for architectural judgment. It just generates plausible-looking code that fails three weeks later in production." The enterprise question is no longer which protocol to use. It is whether AI coding tools augment engineers or multiply technical debt.
 
 **Also:**
 - Claude Code hits a wall on Hacker News: 738 points, 458 comments on quality regressions in complex engineering
@@ -94,10 +94,6 @@ Practical takeaway: Deploy Share Groups for the 20% of topics that need elastic 
 **r/apachekafka on Share Groups:** *Paraphrased sentiment:* "We migrated our ingestion pipeline to Share Groups. Throughput is better, but we had to rebuild our lag alerts from scratch. Partition-level metrics are gone."
 
 **r/rust on 1.95:** *Paraphrased sentiment:* "`if let` guards finally remove the `match` nesting nightmare in async code. Less `unwrap`, fewer panics in production."
-
-**Hacker News on Claude Code:** *Paraphrased sentiment:* "The February update broke refactoring workflows. I spent more time tuning settings than writing code. High effort mode helps but the configuration maze is insane."
-
-**Hacker News on vibe coding:** *Paraphrased sentiment:* "AI doesn't replace the need for architectural judgment. It just generates plausible-looking code that fails three weeks later in production."
 
 ---
 
