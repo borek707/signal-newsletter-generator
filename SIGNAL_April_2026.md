@@ -29,6 +29,8 @@ image: "/images/blog/signal-april-2026-ai-agents.png"
 - **[Rust 1.95.0](https://blog.rust-lang.org/2026/04/16/Rust-1.95.0.html)** stabilizes `if let` guards in match arms and `cfg_select!` for conditional compilation
 - **[JVM ecosystem accelerates on JDK 17+](https://www.scala-lang.org/)**: Scala 3.8 requires JDK 17, forcing teams to split legacy on 3.3 LTS and new projects on 3.8.x. Spring Boot virtual threads hit production but pinned carrier threads remain a real-world problem
 - **[Strimzi 0.51](https://github.com/strimzi/strimzi-kafka-operator/releases)** and **[kroxylicious 0.19.0](https://kroxylicious.io/blog/kroxylicious-proxy/releases/2026/03/04/release-0_19_0.html)** add Kafka 4.2.0 support for Kubernetes and protocol proxies
+- **[Ammonite is deprecated](https://thisweekinscala.substack.com/p/this-week-in-scala-apr-13-2026)** — the REPL that powered half the Scala ecosystem is officially unmaintained. Teams must migrate to Scala CLI or plain `scala` repl
+- **[CVE in sbt](https://thisweekinscala.substack.com/p/this-week-in-scala-apr-20-2026)** — command injection vulnerability patched in sbt 1.12.9 and 2.0.0-RC12. Security teams should audit build definitions
 - **[Kafka 4.2.0](https://kafka.apache.org/blog/2026/02/17/apache-kafka-4.2.0-release-announcement/)** Share Groups hit production with KIP-1226 lag metrics, but partition-level observability drops
 
 ---
@@ -95,6 +97,8 @@ Practical takeaway: Deploy Share Groups for the 20% of topics that need elastic 
 
 **Rust developers** — [Linuxiac](https://linuxiac.com/rust-1-95-released-with-new-match-guards-and-stable-api-additions/) covers the 1.95.0 release: "Support for `if let` guards within match expressions... enabling additional conditional pattern checks directly in match arms." The community notes this eliminates nested pattern matching and reduces unwrap-driven crashes in async code.
 
+**Scala REPL** — [This Week in Scala](https://thisweekinscala.substack.com/p/this-week-in-scala-apr-6-2026) reports Ammonite deprecation as the top community story of April: "Ammonite is now deprecated." Teams relying on Ammonite scripts for CI and local tooling are migrating to Scala CLI. The native `scala` repl in 3.8.x is the supported path forward.
+
 ---
 
 ## In the Know
@@ -105,6 +109,8 @@ Practical takeaway: Deploy Share Groups for the 20% of topics that need elastic 
 
 **[Kafka Monthly Digest: March 2026](https://developers.redhat.com/blog/2026/04/03/kafka-monthly-digest-march-2026)** published April 3 by Red Hat. The community submitted 16 KIPs (1293 to 1308). Highlights include KIP-1303 on tiered storage follower deprioritization and KIP-1307 on SerDe and interceptor metrics.
 
+**[CVE: Command Injection Vulnerability in sbt](https://thisweekinscala.substack.com/p/this-week-in-scala-apr-20-2026)** — patched in sbt 1.12.9 and 2.0.0-RC12. Build definitions that interpolate user input into shell commands are the attack vector. Audit your `build.sbt` for `%%`, `!!`, or `Process` calls that touch untrusted data.
+
 **[Bram Cohen on vibe coding](https://bramcohen.com/p/the-cult-of-vibe-coding-is-insane)** argues that AI coding tools increase bad-code throughput faster than review discipline scales. The HN discussion converged on the same theme: quality control, not output volume, is the bottleneck.
 
 ---
@@ -112,6 +118,8 @@ Practical takeaway: Deploy Share Groups for the 20% of topics that need elastic 
 ## Top Resources
 
 **Repo:** [strimzi-kafka-operator](https://github.com/strimzi/strimzi-kafka-operator) 0.51 — Kubernetes operator for Kafka now supports 4.2.0 with per-listener connection settings and server-side applies. Running Kafka on Kubernetes? This is your upgrade path.
+
+**Tool:** [Metals v1.6.7 — Osmium](https://thisweekinscala.substack.com/p/this-week-in-scala-apr-13-2026) — Scala language server with MCP integration for AI agents. AI coding tools can now compile, test, and refactor Scala code directly from the IDE. If your team experiments with Claude Code or Cursor on Scala codebases, Metals Osmium is the bridge.
 
 **Paper:** [KIP-1303: Deprioritize Tiered Storage Followers In Leader Election](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1303%3A+Deprioritize+Tiered+Storage+Followers+In+Leader+Election) — Kafka 4.3 will allow new replicas to sync faster by skipping remote storage. The tradeoff is degraded performance if those replicas become leaders. Planning tiered storage? Understand the election bias.
 
