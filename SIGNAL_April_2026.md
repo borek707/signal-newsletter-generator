@@ -34,7 +34,7 @@ image: "/images/blog/signal-april-2026-ai-agents.png"
 
 **That is not a Claude-specific problem. It is an architecture problem.** [Bram Cohen published "The cult of vibe coding is dogfooding run amok"](https://bramcohen.com/p/the-cult-of-vibe-coding-is-insane) in April, arguing that AI coding tools increase bad-code throughput faster than review discipline can scale. The pattern is consistent across tools: the model generates plausible-looking code that passes superficial review, then fails in integration, edge cases, or concurrency. Teams discover the debt weeks later when production metrics degrade.
 
-**The enterprise split is becoming visible.** One camp treats AI coding as augmentation: pair programming with a junior that never sleeps, but always needs senior review. The other camp treats it as throughput multiplication: ship more stories per sprint, measure output not outcome. The first camp sees modest gains and stable systems. The second camp sees velocity spikes followed by incident waves. JPMorgan reportedly achieved 83% faster research cycles with its LLM Suite, but those are analyst-reported metrics in a narrow domain, not general software engineering.
+**The enterprise split is becoming visible.** One camp treats AI coding as augmentation: pair programming with a junior that never sleeps, but always needs senior review. The other camp treats it as throughput multiplication: ship more stories per sprint, measure output not outcome. The first camp sees modest gains and stable systems. The second camp sees velocity spikes followed by incident waves. [JPMorgan reportedly achieved 83% faster research cycles](https://fifthrow.com/blog/ai-agent-orchestration-goes-enterprise-the-april-2026-playbook-for-systematic-innovation-risk-and-value-at-scale) with its LLM Suite, but those are analyst-reported metrics in a narrow domain, not general software engineering.
 
 **Scalac angle:** Do not ban AI coding tools. Ban AI-generated changes in critical paths without architectural review. Use agents for boilerplate, tests, and documentation. Never use them for distributed consensus logic, concurrency primitives, or schema migrations. Measure bug rate per commit, not lines written. If your team cannot explain why an AI-generated change works, it does not work.
 
@@ -98,7 +98,7 @@ Practical takeaway: Deploy Share Groups for the 20% of topics that need elastic 
 
 **[CVE: Command Injection Vulnerability in sbt](https://thisweekinscala.substack.com/p/this-week-in-scala-apr-20-2026)** — patched in sbt 1.12.9 and 2.0.0-RC12. Build definitions that interpolate user input into shell commands are the attack vector. Audit your `build.sbt` for `%%`, `!!`, or `Process` calls that touch untrusted data.
 
-**[Bram Cohen on vibe coding](https://bramcohen.com/p/the-cult-of-vibe-coding-is-insane)** argues that AI coding tools increase bad-code throughput faster than review discipline scales. The HN discussion converged on the same theme: quality control, not output volume, is the bottleneck.
+
 
 ---
 
