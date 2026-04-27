@@ -18,7 +18,7 @@ image: "/images/blog/signal-april-2026-ai-agents.png"
 ## Today
 
 - **[Claude Code backlash](https://github.com/anthropics/claude-code/issues/42796)** gathers 738 points and 458 comments on Hacker News as developers report quality regressions in complex engineering tasks
-- **[MCP and A2A protocols](https://modelcontextprotocol.io/)** mature: MCP Dev Summit draws 1,200 attendees, A2A v1.0 ships with Signed Agent Cards
+- **[MCP Dev Summit](https://www.infoq.com/news/2026/04/aaif-mcp-summit/)** draws 1,200 attendees in New York. **[A2A v1.0](https://a2a-protocol.org/latest/announcing-1.0/)** ships with Signed Agent Cards, multi-tenancy, and gRPC
 - **[Rust 1.95.0](https://blog.rust-lang.org/2026/04/16/Rust-1.95.0.html)** stabilizes `if let` guards in match arms and `cfg_select!` for conditional compilation
 - **[JVM ecosystem accelerates on JDK 17+](https://www.scala-lang.org/)**: Scala 3.8 requires JDK 17, forcing teams to split legacy on 3.3 LTS and new projects on 3.8.x. Spring Boot virtual threads hit production but pinned carrier threads remain a real-world problem
 - **[Strimzi 0.51](https://github.com/strimzi/strimzi-kafka-operator/releases)** and **[kroxylicious 0.19.0](https://kroxylicious.io/blog/kroxylicious-proxy/releases/2026/03/04/release-0_19_0.html)** add Kafka 4.2.0 support for Kubernetes and protocol proxies
@@ -42,7 +42,7 @@ image: "/images/blog/signal-april-2026-ai-agents.png"
 
 ## Notes from the Trenches: MCP and A2A Hit Production — The Governance Gap
 
-**MCP and A2A protocols reached production maturity in April.** MCP crossed 97 million monthly SDK downloads. A2A v1.0 shipped with Signed Agent Cards, multi-tenancy, and gRPC. 150+ organizations support A2A. The protocols work.
+**MCP and A2A protocols reached production maturity in April.** [MCP crossed 97 million monthly SDK downloads](https://blog.modelcontextprotocol.io/) with 10,000+ active servers. [A2A v1.0 shipped](https://a2a-protocol.org/latest/announcing-1.0/) with Signed Agent Cards, multi-tenancy, and gRPC. [150+ organizations](https://www.prnewswire.com/news-releases/a2a-protocol-surpasses-150-organizations-lands-in-major-cloud-platforms-and-sees-enterprise-production-use-in-first-year-302737641.html) now support A2A. The protocols work.
 
 **The Problem:** Protocols do not replace policy. Teams adopt MCP servers without authentication boundaries. A2A agent cards expose capabilities without rate limiting. The "connect everything" mindset creates shadow agent infrastructure. You cannot audit what you cannot see.
 
