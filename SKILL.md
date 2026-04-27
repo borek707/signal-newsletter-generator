@@ -95,11 +95,16 @@ No throat-clearing.]
 - Breaking changes in core tools
 - AI integration in existing stacks
 
+**Substack sources (This Week in Scala, etc.):**
+- Substack blocks bots on the homepage. Use RSS feed with mobile user-agent: `curl -s -L -A "Mozilla/5.0 (iPhone...)" "https://[subdomain].substack.com/feed"`
+- Parse `<pubDate>` and `<link>` to get weekly issues, then fetch individual posts
+
 **What to SKIP (do NOT include):**
-- Event/conference announcements (CFPs, ticket sales) — these go to Scalendar
+- Event/conference announcements (CFPs, ticket sales, Devoxx, JavaOne, MCP Dev Summit) — these go to Scalendar, not SIGNAL
 - Minor library releases without architectural impact
 - Tutorial posts without production context
 - Vendor marketing without technical depth
+- Future-dated threads: if the newsletter date (e.g., April 2026) is in the future relative to training data, Reddit/HN threads from that month may not exist. Rely on official release notes, blogs, and newsletters instead.
 
 ---
 
@@ -373,11 +378,13 @@ Based on March 2026 issue corrections. Apply to all future issues:
 - **If no public source:** Use "reportedly", "according to early adopters", or remove the number
 - **Never invent metrics** (views, upvotes, engagement numbers)
 
-### 3. Reddit Quotes - Paraphrase or Link
-- **Specific upvote counts require specific thread links**
-- ❌ BAD: "[183 upvotes](https://www.reddit.com/r/scala/comments/)" (link to subreddit, not thread)
-- ✅ GOOD: "*Paraphrased sentiment we keep seeing:* 'quote...'" OR link to specific thread with real count
-- **When in doubt:** Mark as "Paraphrased sentiment from r/[subreddit]"
+### 3. Community Voice Quotes - Source or Skip
+- **NEVER invent fake Reddit/HN quotes.** If you cannot find a specific thread, synthesize from a real article/blog and attribute it: "[State of Scala 2026](link) synthesizes migration patterns: 'quote...'"
+- ❌ BAD: "r/scala on JDK 17: *Paraphrased sentiment:* 'Teams are splitting...'" (no source, implies real thread)
+- ✅ GOOD: "Scala ecosystem — [State of Scala 2026](link) synthesizes migration patterns: 'New services should default to 3.8.x...'"
+- **Deduplicate HN quotes:** If a Hacker News quote appears in the intro/Today section, do NOT repeat it in Community Voice. Move quotes to the intro once, remove from Community Voice.
+- **Specific upvote counts require specific thread links** (HN, Reddit)
+- **When in doubt:** Mark as "Paraphrased sentiment from [source name]" with a real link
 
 ### 4. Future Dates - Estimate, Don't Promise
 - **Roadmap dates are estimates, not facts**
@@ -412,12 +419,15 @@ Based on March 2026 issue corrections. Apply to all future issues:
 ### Pre-publish Verification Checklist
 - [ ] All release dates verified against GitHub/blog sources
 - [ ] All metrics either sourced or softened with "reportedly"/"early adopters"
-- [ ] Reddit quotes either link to specific threads OR marked as "paraphrased"
+- [ ] Community Voice quotes attribute real articles/blogs, never fake Reddit threads
+- [ ] HN quotes in intro are removed from Community Voice (no duplicates)
+- [ ] Reddit quotes either link to specific threads OR marked as "paraphrased" with source
 - [ ] Future roadmap dates use "unlikely before" or "post-YYYY" not exact dates
 - [ ] Technical integrations use "with X support" not "built entirely on X"
 - [ ] KIPs/proposals checked for actual status (accepted vs proposed)
 - [ ] Social media claims stripped of unverified metrics (views, dates)
 - [ ] Company case studies have direct links to announcements
+- [ ] Event announcements (Devoxx, JavaOne, conferences) moved to Scalendar, not In the Know
 
 ---
 
