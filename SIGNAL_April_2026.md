@@ -14,11 +14,11 @@ image: "/images/blog/signal-april-2026-ai-agents.png"
 ![AI Agent Orchestration](/images/blog/signal-april-2026-ai-agents.png)
 *MCP Dev Summit North America drew 1,200 attendees in April. Protocols are winning. Pilots are not.*
 
-**Welcome back.** In March we covered MCP as a protocol debate. In April the numbers arrived. Claude Code hit a wall on Hacker News: 738 points, 458 comments as engineers reported regressions in complex engineering tasks. The vibe coding era meets production reality.
+**Welcome back.** In March we covered MCP as a protocol debate. In April the reality arrived. Claude Code hit a wall on Hacker News: 738 points, 458 comments as engineers reported regressions in complex engineering tasks. MCP and A2A protocols crossed into production maturity. The JVM ecosystem accelerated on JDK 17. The vibe coding era meets production reality.
 
 **Also:**
-- Ammonite, the Scala REPL used by half the ecosystem, is officially deprecated
-- CVE in sbt command injection patched in 1.12.9 and 2.0.0-RC12. Security teams must audit build definitions
+- Kafka Share Groups graduate to production, but partition-level observability drops
+- Rust 1.95 ships if-let guards, reducing nested pattern matches in async code
 
 ---
 
