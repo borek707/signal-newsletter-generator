@@ -48,7 +48,7 @@ Every month: one architecture debate with real trade-offs, one production war st
 
 ## Notes from the Trenches: Kafka 4.2 — Diskless Topics and Share Groups
 
-![Apache Kafka](images/kafka-hero-confluent.png)
+![Apache Kafka](../images/kafka-hero-confluent.png)
 *Hero image from Confluent blog — Apache Kafka 4.2.0 release*
 
 **Apache Kafka approves [KIP-1150](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1150%3A+Diskless+Topics).** The community voted yes on March 2nd, making diskless topics officially part of the roadmap. Brokers serve partitions directly from object storage using a leaderless architecture.

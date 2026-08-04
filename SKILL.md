@@ -75,17 +75,33 @@ No throat-clearing.]
 
 ### Step 1: Collect Signals from Multiple Sources
 
-**Primary Sources:**
-1. **r/scala** - Scala ecosystem, FP, JVM trends
-2. **This Week in Scala** ([Substack](https://thisweekinscala.substack.com/)) - Weekly Scala ecosystem roundup, releases, community news
-3. **JVM Weekly** ([jvm-weekly.com](https://www.jvm-weekly.com/)) - JVM ecosystem updates, performance, tooling
-4. **r/rust** - Systems programming, performance, safety
-5. **This Week in Rust** ([this-week-in-rust.org](https://this-week-in-rust.org/)) - Curated Rust updates, RFCs, project news
+**Required Sources (must check every month):**
+1. **JVM Weekly** ([jvm-weekly.com](https://www.jvm-weekly.com/)) - JVM ecosystem, JDK, GraalVM, performance
+   - Use sitemap: `curl -s "https://www.jvm-weekly.com/sitemap.xml" | grep -oE "https://[^<]+"`
+   - Fetch individual posts directly
+2. **This Week in Scala** ([thisweekinscala.substack.com](https://thisweekinscala.substack.com/)) - Scala releases, SIPs, tooling
+   - Use sitemap: `curl -s "https://thisweekinscala.substack.com/sitemap.xml" | grep -oE "https://[^<]+"`
+   - Fetch individual weekly issues, then extract article links from HTML
+3. **InfoQ Software Architects' Newsletter** ([infoq.com/software-architects-newsletter/](https://www.infoq.com/software-architects-newsletter/)) - Enterprise architecture, AI, postmortems
+   - Find latest issue URL on the landing page (e.g. `https://assets.infoq.com/newsletter/architect/en/newsletter_sample/NNNArchitects_NL_Month-YYYY.html`)
+   - Fetch and extract article links
+4. **ByteByteGo Newsletter** ([blog.bytebytego.com](https://blog.bytebytego.com/)) - System design, distributed systems, AI infrastructure
+   - Use Substack archive or homepage to find monthly posts
+   - Check dates (MAY 28, 2026 format)
+5. **The Pragmatic Engineer** ([newsletter.pragmaticengineer.com](https://newsletter.pragmaticengineer.com/)) - Engineering leadership, AI tooling trends, job market
+   - Use Substack archive or homepage
+   - Key series: "The Pulse" (weekly trends), deepdives
+   - Check for AI spend rationalization, hiring trends, tool adoption data
+
+**Secondary Sources (check if time allows):**
+5. **r/scala** - Scala ecosystem, FP, JVM trends
 6. **r/apachekafka** - Streaming, migrations, ops
 7. **r/dataengineering** - Pipelines, architecture decisions
-8. **InfoQ** - Enterprise case studies
-9. **Hacker News** - Engineering discussions
-10. **Engineering Blogs** - Reddit, Netflix, Uber, Confluent, Lightbend/Akka
+8. **Hacker News** - Engineering discussions
+9. **Engineering Blogs** - Netflix, Uber, Confluent, Lightbend/Akka
+
+**Skip (stale / unreliable):**
+- **Distributed Systems Newsletter** (distributedsystems.substack.com) - Last post January 2026, irregular cadence. Only check if user explicitly requests.
 
 **What to look for:**
 - "Migrated from X to Y" with metrics
@@ -95,9 +111,17 @@ No throat-clearing.]
 - Breaking changes in core tools
 - AI integration in existing stacks
 
-**Substack sources (This Week in Scala, etc.):**
-- Substack blocks bots on the homepage. Use RSS feed with mobile user-agent: `curl -s -L -A "Mozilla/5.0 (iPhone...)" "https://[subdomain].substack.com/feed"`
-- Parse `<pubDate>` and `<link>` to get weekly issues, then fetch individual posts
+**How to fetch pages (use Chrome MCP, NOT curl):**
+- `curl` fails on Medium (403), Substack paywalls, Cloudflare bot checks, and JS-rendered SPAs
+- Use `chrome-devtools-mcp` (headless Chrome via stdio) or `hangwin/mcp-chrome` (real Chrome profile via extension)
+- Chrome MCP tools: `navigate_page`, `take_snapshot`, `evaluate_script`, `get_web_content`
+- Example stdio script pattern is in the repo (`/tmp/mcp-*.js`)
+
+**Substack RSS Access (fallback only):**
+```bash
+curl -s -L -A "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1" "https://[subdomain].substack.com/feed" | grep -oE '<link>[^<]*</link>'
+```
+Then fetch individual post URLs.
 
 **What to SKIP (do NOT include):**
 - Event/conference announcements (CFPs, ticket sales, Devoxx, JavaOne, MCP Dev Summit) — these go to Scalendar, not SIGNAL
@@ -511,6 +535,62 @@ tolerance for vendor lock-in versus timeline uncertainty.
 | State of Scala 2026 in Community Voice | Was in March issue | Removed |
 | Event announcements (Devoxx, JavaOne, MCP Summit) | Events go to Scalendar, not SIGNAL | Removed from In the Know |
 | JVM listing sentence in intro | "Kafka graduated and Rust shipped" reads like a bullet | Removed, keep intro narrative |
+
+---
+
+## Lessons from May 2026 Issue
+
+### Link Placement
+
+**Today section** -- Link belongs on the bold text, not loose at the end of the bullet:
+```
+- **[Oracle proposes JVMCI deprecation.](https://link)** The JVM Compiler Interface is marked for removal.
+```
+Never:
+```
+- **Oracle proposes JVMCI deprecation.** The JVM Compiler Interface is marked for removal.
+  [JVM Weekly Vol. 176](https://link)
+```
+
+**Signal Over Noise** -- Embed the link in the first sentence of each item. Never leave a bare `[Source](url)` at the end of the paragraph.
+
+**In the Know** -- Use bullet format, NOT a markdown table. Tables break in many renderers.
+```
+**[Name](link)** -- One sentence description.
+```
+
+### Date References in Body
+
+The newsletter header already says the month and year. Do NOT repeat "in May 2026", "in April 2026" etc. throughout the body -- it reads like a changelog.
+
+- Opening of Debate/Trenches: drop the date entirely. "Oracle opened JDK-8382582" not "In May 2026, Oracle opened JDK-8382582."
+- Signal Over Noise: use "last month" if a date reference is needed, or omit.
+- Never repeat the same month phrase more than once in the body.
+
+### Footer Consistency
+
+The "What is SIGNAL?" block must be identical across all issues:
+```
+**What is SIGNAL?** A monthly, opinionated newsletter for JVM and Scala teams who run real distributed systems. Each issue has three sections -- Architecture Debate, Notes from the Trenches, Signal Over Noise -- and focuses only on changes and incidents that matter in production, not on hype or vendor marketing.
+
+Scalac builds high-throughput systems in Scala, Java, and Rust; SIGNAL is the filter we wish we had when making our own architecture bets.
+```
+Do NOT have two separate blocks describing Scalac and SIGNAL -- merge into one.
+
+### Signal Over Noise Selection Criteria
+
+"Signal Over Noise" = breaking changes, deprecations, major shifts with migration implications. NOT opinion essays without hard data. If there is no concrete action a reader can take, it does not belong here.
+
+### Paywalled Sources
+
+Do NOT reference articles behind paywalls (e.g. Pragmatic Engineer paid tier) as primary sources. If the key data point is not accessible, either find a free alternative source or drop the story.
+
+### KotlinConf / JetBrains Ecosystem
+
+KotlinConf (typically May, Munich) is a tier-1 event for this newsletter's audience. Always check:
+- Kotlin release announcements (breaking changes, backend removals)
+- JetBrains agent/AI framework releases (Koog, kotlin-agent-skills)
+- Security policy updates (CVE numbering, support windows)
 
 ### Substack RSS Access
 
