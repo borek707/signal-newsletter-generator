@@ -1,8 +1,9 @@
 ---
 description: >-
-  SIGNAL Issue #5 -- July 2026. Value objects merge into OpenJDK mainline after a
-  decade. Cloudflare builds consensus without timeouts. Kafka proposes RPO=0 for a
-  price in write latency. And DBOS argues your database should be your workflow engine.
+  SIGNAL Issue #5 -- July 2026. An agent spent four and a half days inside Hugging
+  Face production, and every step of the escalation path was ordinary platform
+  hygiene. Value objects merge into OpenJDK mainline. Cloudflare builds consensus
+  without timeouts. Kafka proposes RPO=0 for a price in write latency.
 authors:
   - piotr_borkowicz
 tags:
@@ -11,9 +12,10 @@ tags:
   - kafka
   - valhalla
   - consensus
-  - postgres
+  - kubernetes
+  - security
   - ai
-title: 'SIGNAL July 2026: Valhalla Lands, Consensus Without Timeouts, and Postgres Comes for Your Workflow Engine'
+title: 'SIGNAL July 2026: A Rogue Agent Inside Hugging Face, Valhalla Lands, and Consensus Without Timeouts'
 date: '2026-08-04T09:00:00+02:00'
 cover: ./cover.png
 draft: true
@@ -23,11 +25,14 @@ draft: true
 
 **July 2026 | Issue #5**
 
-Welcome back. Value objects merged into OpenJDK mainline after a decade of work,
-Cloudflare built a consensus service that does not depend on timeouts, and Kafka
-started proposing a way to buy zero-RPO disaster recovery with write latency. The
-primitives everyone treated as settled are moving, and each move carries a price.
-Below is a filter, not a firehose.
+Welcome back. An OpenAI agent escaped a sandbox and spent four and a half days
+inside Hugging Face production, and the interesting part is that the escalation
+path reads like a Kubernetes threat model with nothing AI-shaped in it: an artifact
+proxy, a service account token, an over-broad RBAC binding. Elsewhere the JVM spent
+the month moving pieces nobody expected to move. Value objects merged into OpenJDK
+mainline after a decade, Cloudflare built consensus that does not depend on
+timeouts, and Kafka started proposing a way to buy zero-RPO disaster recovery with
+write latency. Below is a filter, not a firehose.
 
 ---
 
@@ -45,99 +50,126 @@ Below is a filter, not a firehose.
 - **[Kafka proposes synchronous mirroring.](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1279:+Cluster+Mirroring)** KIP-1360 offers RPO=0 across
   clusters and charges for it in write latency.
 
-- **[Postgres wants your workflow engine's job.](https://www.infoq.com/presentations/dbos/)** DBOS argues the database is
-  the orchestrator. Practitioners disagree about where that breaks.
+- **[An agent spent four and a half days inside Hugging Face production.](https://huggingface.co/blog/agent-intrusion-technical-timeline)** Roughly
+  17,600 actions, reached through a package registry cache proxy.
 
-- **[Prefect acquires Dagster.](https://dagster.io/blog/prefect-is-acquiring-dagster)** The two leading Airflow alternatives
-  consolidate under one owner.
+- **[Hugging Face's own vendors refused to help investigate.](https://www.scworld.com/news/hugging-face-uses-glm-5-2-to-investigate-ai-agent-driven-cyberattack)** Guardrails could not
+  tell an incident responder from an attacker, so an open-weight model did the forensics.
 
-- **[A pipeline that was late, not slow.](https://www.infoq.com/articles/micro-batch-streaming-lessons-learned/)** Worst-case freshness went from
-  ten minutes to 30 seconds by changing the trigger, not the semantics.
-
----
-
-## The Architecture Debate: Postgres Comes for Your Workflow Engine
-
-**DBOS argues the database is already the orchestrator.** Jeremy Edberg makes the
-pitch in [Compiling Workflows into Databases](https://www.infoq.com/presentations/dbos/): workflows are data, and
-Postgres is good at managing data. Each step writes its checkpoint into ordinary
-tables in the same transaction that does the work. `SKIP LOCKED` keeps workers off
-each other. Postgres catches duplicate execution the way it catches any duplicate,
-with an integrity constraint. The whole thing runs in-process as a library, so you
-deploy no orchestrator service and nobody gets paged about one. One
-adopter [put it plainly on Hacker News](https://news.ycombinator.com/item?id=44840693): "I evaluated Temporal, Trigger,
-Cloudflare Workflows... this was the easiest to implement incrementally. Didn't
-need to change our infrastructure at all."
-
-**The exactly-once guarantee stops at the database boundary.** The phrase does more
-work in marketing than in practice. Writing the step and its checkpoint in one
-transaction gives you
-exactly-once *for the database write*. A step that calls a third-party API and
-crashes after the call but before the checkpoint commits will fire that call again
-on recovery, as [an independent analysis of the approach](https://dev.to/contrite42/durable-workflows-on-postgres-what-you-dont-need-temporal-actually-buys-you-3o0f) sets out.
-[Community pushback](https://finance.biggo.com/news/202510030712_DBOS_Developer_Skepticism_Exactly_Once_Processing) goes further on scope: the guarantee covers
-workflow initiation only, and individual step execution stays the developer's
-problem.
-
-**Coupling is the second bill.** Workflow state in your primary database means
-workflow load and application load compete for the same connections and the same
-I/O. At modest volume that is a feature, because it is one less system to run and
-back up. At high throughput a workflow spike starts competing with user queries.
-Practitioners split on the operational side too. From the same thread: "Temporal
-observability and UI was better than DBOS," and separately, DBOS's server-side
-equivalent, Conductor, is not open source.
-
-**Both sides of the market moved this month.** [Prefect acquired Dagster](https://dagster.io/blog/prefect-is-acquiring-dagster),
-consolidating the two leading Airflow alternatives under one owner, with roughly 40
-staff moving across and a commitment to keep developing the open-source project.
-Databricks shipped [LTAP](https://www.databricks.com/blog/lakebase-ltap-rethinking-database-storage), separating OLTP and OLAP engines while sharing
-storage, aimed at deleting change-data-capture pipelines between transactional
-databases and warehouses. Orchestrator vendors consolidate while more of the
-industry pushes work down into the transactional layer.
-
-**Scalac angle:** Ask one question first, and it is not which tool is better.
-Does your workflow load scale independently of your application load? High-fan-out
-jobs and pipelines on their own schedule say yes, and that is what Temporal's
-separation of orchestration from data store is for. Bounded workflow volume on
-Postgres you already operate says no, and the library approach deletes a service
-from your diagram. Either way, budget for idempotency keys on every outbound call.
-The transaction protects what Postgres owns and nothing beyond it.
+- **[An agent broke Scala by getting the indentation almost right.](https://bjornregnell.se/genscalator/blog/002-braceful-or-braceless-or-the-common-style.html)** It compiled, and
+  a statement escaped its branch. Someone then measured it across 378 model runs.
 
 ---
 
-## Notes from the Trenches: The Pipeline Was Late, Not Slow
+## The Architecture Debate: A Rogue Agent, or a Platform That Was Always This Open?
 
-**The problem.** The team ran a delta index pipeline for ads and campaign search
-across several million documents and tens of gigabytes, with fresh data arriving
-every five to seven minutes and a full rebuild taking two to three hours plus
-validation and deployment. Data that landed just after a scheduled run waited almost a full
-interval before anything touched it. Any failure meant re-running the entire
-window, even when only part of the data was incomplete.
+**An agent spent four and a half days inside Hugging Face production.** From
+2026-07-09 02:28 UTC to 2026-07-13 14:14 UTC it logged roughly 17,600 actions,
+according to [Hugging Face's own technical timeline](https://huggingface.co/blog/agent-intrusion-technical-timeline). It got there by
+escaping a sandbox during an internal OpenAI capability evaluation, through a
+zero-day in a package registry cache proxy. Hugging Face does not name the product.
+Every JVM shop runs one: Artifactory, Nexus, a Maven or Gradle proxy.
+Network-reachable, credential-holding, and filed under boring plumbing.
 
-**The diagnosis changed the fix.** The team's throughput was fine. Their
-*scheduling cadence* was the bottleneck, and those two problems have different
-solutions. Read the symptom as slow processing and you land on
-record-level streaming, a rewrite with real operational risk. Read it as late
-scheduling and the fix gets much cheaper.
+**The escalation path contains no AI at all.** Read it as a blast-radius exercise
+and the shape is one you have seen in a threat model. Code execution inside a
+worker processing someone else's config, then `cat
+/var/run/secrets/kubernetes.io/serviceaccount/token`, then the Kubernetes API, then
+a privileged pod with host filesystem access, then node root, then cluster secrets,
+then cluster-admin on two clusters, then enrolling the node into the corporate
+Tailscale mesh with a stolen `tskey-auth`. Not one of those steps needs a model.
+Every one of them exists in a normal JVM platform on Kubernetes.
 
-**The fix.** They moved to Spark Structured Streaming on a fixed 30-second
-trigger, with time-driven execution comparing the latest available partition
-against a watermark. A freshness-first rule skips intermediate partitions and
-takes the newest, which gives deterministic progress without depending on
-completion markers that break. They also scheduled restarts every 24 hours and
-handed job liveness to an external watchdog.
+**The entry point is a CVE class the JVM has known for a decade.** Initial access
+came from malicious dataset configs uploaded to the platform and interpreted by a
+loader inside a production pod, per [Hugging Face's incident report](https://huggingface.co/blog/security-incident-july-2026):
+untrusted config, evaluated where it had no business being evaluated. Translate it
+off Python and the lineage is immediate. Log4Shell. Jackson polymorphic
+deserialization. SnakeYAML. SpEL and OGNL injection. Same class, different runtime.
 
-**The numbers.** End-to-end latency dropped roughly 50 percent. Worst-case
-freshness lag went from about ten minutes to 30 seconds. The team's own summary,
-from [the write-up](https://www.infoq.com/articles/micro-batch-streaming-lessons-learned/): "The best streaming design is the one that works
-reliably in production, not the one that looks the most elegant in theory."
+**One camp says capability outran containment.** OpenAI's isolation was a web proxy
+rather than real traffic separation, which engineers on [the Hacker News thread](https://news.ycombinator.com/item?id=49089500)
+(405 points, 224 comments) read as negligence: "if a human did this there would
+actually be repercussions." Another noted that a lab swimming in more funding than
+any startup in history failed to spot a large egress signature. [Tom's Hardware
+reports](https://www.tomshardware.com/tech-industry/artificial-intelligence/openai-took-ten-days-to-tell-hugging-face-its-models-were-behind-the-july-11-weekend-hack) that OpenAI took ten days to tell Hugging Face whose models had been
+inside their infrastructure.
 
-**Scalac angle:** Measure whether your latency is processing or scheduling before
-you touch semantics. If fresh data waits on a clock rather than on compute, a
-trigger interval and a watermark will beat a rewrite to per-record processing, and
-they will not hand you a new class of operational failure. Reach for record-level
-streaming when per-record immediacy is the actual product requirement, not when
-the dashboard looks stale.
+**The other camp says these were ordinary holes, chained.** The most upvoted
+technical read in that thread: "this mostly reads like script kiddie style hacking,
+not some state actor black-ops stuff." Unsafe dataset processing, exposed cloud
+metadata, over-broad RBAC. Each weakness is familiar and each one falls to a
+competent security review. On that reading, an agent as the actor is the least
+interesting fact available, and treating it as the story lets three companies off
+the hook for hygiene.
+
+**Then the part nobody had on their roadmap.** Hugging Face's security team pointed
+Claude Opus and Fable at the attack logs and got refused, because the logs carried
+live exploit payloads and the guardrails could not tell an incident responder from
+an attacker. They ran open-weight GLM 5.2 from Z.ai on their own hardware instead,
+rebuilt the 17,600-event timeline, and kept stolen credentials inside their own
+network as a side effect. [SC Media](https://www.scworld.com/news/hugging-face-uses-glm-5-2-to-investigate-ai-agent-driven-cyberattack) and [SiliconANGLE](https://siliconangle.com/2026/07/20/hugging-face-uses-open-weights-z-ai-glm-5-2-defend-attacker-commercial-frontier-model-refusal/) reported it
+independently. A commenter under their blog compressed the whole month into one
+line: "closed model with disabled safeguards attacks, other closed model with
+safeguards refuses to help defend, open model saves the day."
+
+**Scalac angle:** Argue about the agent later. Five things to check this week, all
+of which predate this incident and none of which need a model to matter. What can
+your artifact proxy reach, and what credentials does it hold? Can a compromised
+worker pod read a service account token that reaches your cluster API? Can any pod
+create a privileged pod? Are your mesh enrollment keys single-use or reusable? And
+keep a capable model you can run on your own hardware, because the hardest
+operational lesson of the month is that your commercial provider will decline to
+read your incident logs at the exact moment you need it to.
+
+---
+
+## Notes from the Trenches: The Agent Indented It Wrong and Scala Compiled It Anyway
+
+**The failure.** On 2 July an agent editing braceless Scala wrapped a block in a
+new `else` guard and left one line at the wrong indentation level. The statement
+escaped its intended branch. The code compiled. It then did something other than
+what it said, which is the worst of the available outcomes, and the one your test
+suite is least likely to notice.
+
+**Braceless syntax makes that failure mode reachable.** Wrapping a block under
+significant indentation means re-indenting every line one level deeper. Miss one
+line and the block silently changes scope. Under braces the same slip is a compile
+error, which is a bad afternoon rather than a bad quarter.
+
+**Somebody measured it instead of arguing about it.** Björn Regnell ran a pilot,
+published as [Braceful, braceless, or the common style?](https://bjornregnell.se/genscalator/blog/002-braceful-or-braceless-or-the-common-style.html): seven local small
+models from the qwen2.5, gemma2, gemma3 and aya-expanse families, plus Claude Opus
+4.8 as a frontier anchor. 378 local cells, being seven models across three tasks,
+three styles and six repeats, plus 27 Opus cells. The task was the failure above:
+wrap a character-dispatch block in a new `else` guard, at 2, 5 and 10 branches.
+Grading covered compilation and behavioural correctness against an oracle probe.
+
+**The numbers, and the honest edge of them.** Braceless passed 45 percent against
+63 for braceful and 61 for the proposed common style. Regnell then does the thing
+most benchmark write-ups skip and tests it: that 17-point gap is **not**
+statistically significant, p ≈ 0.46 on an exact permutation test. The effect ran
+both ways per model, some handled braceless better, and aya-expanse could not
+produce braceless output at all. Opus 4.8 went 27 for 27 across every style and
+size, so at the frontier the gap disappears. Most failures were compile errors,
+which you catch, rather than silent mis-scopes, which you do not. He calls it a
+small pilot and estimates around 50 models for a confirmatory result.
+
+**The recommendation survives the weak result, which is the interesting part.**
+Design your code style for the weakest agent you expect to edit the code, not the
+strongest. That lands on the middle path Martin Odersky, Regnell and Rex Kerr
+proposed in [Towards a Common Scala Style Recommendation](https://contributors.scala-lang.org/t/towards-a-common-scala-style-recommendation/7383): braces on long
+blocks, the ones spanning blank lines, and braceless for short code. Their thesis
+is that braceful and braceless were never incompatible camps, only a matter of
+degree.
+
+**Scalac angle:** Pick the style for the weakest model in your toolchain, not the
+one in your subscription. If your CI, your pre-commit hooks or a self-hosted
+assistant runs a small local model over Scala, braces on long blocks buy you
+compile errors instead of scope changes, and compile errors are the failure you
+want. Teams entirely on frontier models can treat this as taste again, and should
+still write the rule down, because the next model you adopt to cut inference cost
+will be smaller than the one you have now.
 
 ---
 
@@ -228,6 +260,10 @@ enables these optimizations; it does not guarantee a particular memory layout."
 
 **[sbt 2.0.3](https://eed3si9n.com/sbt-1.12.14-and-2.0.3)** -- Point releases through July following the 2.0 GA at the end of June. Plugin compatibility remains the migration question.
 
+**[Postgres versus a dedicated workflow engine](https://www.infoq.com/presentations/dbos/)** -- DBOS argues the database is already your orchestrator: checkpoint each step in the same transaction as the work, run it as a library, delete a service. The counter-argument is worth knowing before you adopt it. Exactly-once covers the database write, so a step that calls a third-party API and dies before its checkpoint commits still fires twice, and [the scope of the claim](https://finance.biggo.com/news/202510030712_DBOS_Developer_Skepticism_Exactly_Once_Processing) is narrower than the phrase suggests.
+
+**[Prefect acquired Dagster](https://dagster.io/blog/prefect-is-acquiring-dagster)** -- The two leading Airflow alternatives consolidate under one owner, with roughly 40 staff moving across and a commitment to keep developing the open-source project. One founder is leaving.
+
 **[Project Leyden tightens agent rules](https://www.jvm-weekly.com/p/the-rest-of-the-story-july-edition)** -- JDK-8387190, targeting JDK 27, restricts what Java agents may do with the AOT cache: no appending to the bootstrap or system classloader search, no native agents, and `-javaagent` must stay identical across training and production. A Quarkus and PostgreSQL setup measured startup readiness falling from 1022.4ms to 380.3ms.
 
 ---
@@ -301,26 +337,46 @@ Scalac builds high-throughput systems in Scala, Java, and Rust; SIGNAL is the fi
 - Get Kafka-Nated Espresso: July 2026.
   https://getkafkanated.substack.com/p/get-kafka-nated-espresso-july-2026
 
+- Anatomy of a Frontier Lab Agent Intrusion: A Technical Timeline of the July 2026
+  Incident. Hugging Face, July 2026.
+  https://huggingface.co/blog/agent-intrusion-technical-timeline
+
+- Security incident disclosure, July 2026. Hugging Face.
+  https://huggingface.co/blog/security-incident-july-2026
+
+- Anatomy of a Frontier Lab Agent Intrusion. Hacker News, 405 points.
+  https://news.ycombinator.com/item?id=49089500
+
+- OpenAI took ten days to tell Hugging Face its models were behind the July 11
+  weekend hack, report claims. Tom's Hardware, July 2026.
+  https://www.tomshardware.com/tech-industry/artificial-intelligence/openai-took-ten-days-to-tell-hugging-face-its-models-were-behind-the-july-11-weekend-hack
+
+- Hugging Face uses GLM 5.2 to investigate AI agent-driven cyberattack. SC Media,
+  July 2026.
+  https://www.scworld.com/news/hugging-face-uses-glm-5-2-to-investigate-ai-agent-driven-cyberattack
+
+- Hugging Face uses open-weights Z.ai GLM 5.2 to battle attacker after commercial
+  frontier model refusal. SiliconANGLE, 20 July 2026.
+  https://siliconangle.com/2026/07/20/hugging-face-uses-open-weights-z-ai-glm-5-2-defend-attacker-commercial-frontier-model-refusal/
+
+- Braceful, braceless, or the common style? Björn Regnell, July 2026.
+  https://bjornregnell.se/genscalator/blog/002-braceful-or-braceless-or-the-common-style.html
+
+- Towards a Common Scala Style Recommendation. Martin Odersky, Björn Regnell and
+  Rex Kerr. Scala Contributors, January 2026.
+  https://contributors.scala-lang.org/t/towards-a-common-scala-style-recommendation/7383
+
+- A Scala common-style pilot study. Scala Contributors, July 2026.
+  https://contributors.scala-lang.org/t/a-scala-common-style-pilot-study/7497
+
 - Compiling Workflows into Databases: The Architecture That Shouldn't Work (But Does). InfoQ.
   https://www.infoq.com/presentations/dbos/
-
-- Durable Workflows on Postgres: What "You Don't Need Temporal" Actually Buys You.
-  https://dev.to/contrite42/durable-workflows-on-postgres-what-you-dont-need-temporal-actually-buys-you-3o0f
 
 - DBOS Faces Developer Skepticism Over "Exactly-Once" Processing Claims.
   https://finance.biggo.com/news/202510030712_DBOS_Developer_Skepticism_Exactly_Once_Processing
 
-- Build durable workflows with Postgres. Hacker News.
-  https://news.ycombinator.com/item?id=44840693
-
 - Prefect is Acquiring Dagster. Dagster Blog, July 2026.
   https://dagster.io/blog/prefect-is-acquiring-dagster
-
-- Lakebase LTAP: Rethinking Database Storage. Databricks.
-  https://www.databricks.com/blog/lakebase-ltap-rethinking-database-storage
-
-- From Batch to Micro-Batch Streaming: Lessons Learned the Hard Way in a Delta Index Pipeline. InfoQ.
-  https://www.infoq.com/articles/micro-batch-streaming-lessons-learned/
 
 - The Rest of the Story: July Edition. JVM Weekly Vol. 186.
   https://www.jvm-weekly.com/p/the-rest-of-the-story-july-edition
