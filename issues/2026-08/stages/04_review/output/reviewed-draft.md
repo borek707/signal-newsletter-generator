@@ -114,11 +114,15 @@ An 11-minute failure demo rather than a framework tour. It kills workers, forces
 
 ---
 
-**What is SIGNAL?** A monthly, opinionated newsletter for JVM and Scala teams who run real distributed systems. Each issue has three sections -- Architecture Debate, Notes from the Trenches, Signal Over Noise -- and focuses only on changes and incidents that matter in production, not on hype or vendor marketing.
+**What is SIGNAL?**
 
-Scalac builds high-throughput systems in Scala, Java, and Rust; SIGNAL is the filter we wish we had when making our own architecture bets.
+SIGNAL is a monthly, opinionated newsletter for engineers building and operating JVM and Scala systems, and agentic AI in production.
 
-**Got a story for SIGNAL?** Reply to this email. We read everything.
+Each issue has three sections: Architecture Debate, Notes from the Trenches, and Signal Over Noise. They cover architecture decisions, production lessons, incidents, and ecosystem shifts worth paying attention to. No hype. No vendor talking points.
+
+At Scalac, we build high-throughput distributed systems and agentic AI products in Scala, Java, and Rust. SIGNAL is the filter we wanted when making our own architecture bets.
+
+**Have a story for SIGNAL?** Reply to this email. We read every response.
 
 ---
 

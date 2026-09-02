@@ -100,6 +100,25 @@ No throat-clearing.]
 8. **Hacker News** - Engineering discussions
 9. **Engineering Blogs** - Netflix, Uber, Confluent, Lightbend/Akka
 
+### Research tools and routing
+
+Use `agent-reach` for every external lookup, URL and platform query. It routes
+GitHub, Reddit, YouTube, LinkedIn and ordinary web pages through the available
+backend. Use it to discover sources and to recover readable copies when a direct
+page blocks ordinary fetchers. A social post is a lead, never the sole evidence for
+a technical claim.
+
+Use `last30days` as a constrained discovery pass after the source sweep. Run a
+small set of focused queries, not a broad firehose: `Scala JVM`, `Kafka distributed
+systems`, `agentic AI in production`, and one timely combined query when the month
+provides one. Treat its output as an attention and community-sentiment radar. Verify
+selected claims against primary sources before they enter the issue.
+
+For every candidate, record the originating event date and assign a freshness tag:
+`NEW_THIS_MONTH`, `MATERIAL_UPDATE` or `BACKGROUND_ONLY`. Only the first two can
+lead Debate, Trenches or Signal Over Noise. A background item may provide context
+but must never be written as current news.
+
 **Skip (stale / unreliable):**
 - **Distributed Systems Newsletter** (distributedsystems.substack.com) - Last post January 2026, irregular cadence. Only check if user explicitly requests.
 
@@ -283,6 +302,27 @@ Just lessons that matter.
 ---
 
 ## Images and Visuals
+
+### SIGNAL illustration style
+
+Match the illustration style already used on scalac.io. For SIGNAL, original
+diagram-comics take priority over vendor hero images.
+
+- Create `stages/03_draft/output/images.md` with two required prompts: one for
+  Architecture Debate and one for Notes from the Trenches. Add a cover prompt only
+  when one idea unifies the issue.
+- Use a warm off-white background, rough black hand-drawn outlines, solid-black
+  sticky figures and red as the only accent. Red carries arrows, warnings,
+  underlines and the one metric that matters.
+- Make each image a single readable system relationship, failure mode or decision.
+  Short hand-lettered labels, speech bubbles and one bottom-line sentence are part
+  of the illustration when they clarify the lesson.
+- Keep it bright, sparse and 16:9. Exclude vendor logos, gradients, photorealism,
+  dense dashboards and generic robots. When AI matters, draw it as a bounded actor
+  in the system.
+
+Prompt format: left-to-right composition, exact labels, visual metaphor,
+bottom-line sentence, palette and exclusions.
 
 ### Hero Images from Blogs (priority)
 Always check if the blog post has a hero image. Use it instead of generic logos:
@@ -571,9 +611,15 @@ The newsletter header already says the month and year. Do NOT repeat "in May 202
 
 The "What is SIGNAL?" block must be identical across all issues:
 ```
-**What is SIGNAL?** A monthly, opinionated newsletter for JVM and Scala teams who run real distributed systems. Each issue has three sections -- Architecture Debate, Notes from the Trenches, Signal Over Noise -- and focuses only on changes and incidents that matter in production, not on hype or vendor marketing.
+**What is SIGNAL?**
 
-Scalac builds high-throughput systems in Scala, Java, and Rust; SIGNAL is the filter we wish we had when making our own architecture bets.
+SIGNAL is a monthly, opinionated newsletter for engineers building and operating JVM and Scala systems, and agentic AI in production.
+
+Each issue has three sections: Architecture Debate, Notes from the Trenches, and Signal Over Noise. They cover architecture decisions, production lessons, incidents, and ecosystem shifts worth paying attention to. No hype. No vendor talking points.
+
+At Scalac, we build high-throughput distributed systems and agentic AI products in Scala, Java, and Rust. SIGNAL is the filter we wanted when making our own architecture bets.
+
+**Have a story for SIGNAL?** Reply to this email. We read every response.
 ```
 Do NOT have two separate blocks describing Scalac and SIGNAL -- merge into one.
 
@@ -608,7 +654,7 @@ Generate:
 1. **Newsletter draft** in Markdown
 2. **Sources used** - brief list
 3. **Skipped sources** - rejected signals (for reference)
-4. **Images list** - what images to include with sources
+4. **Image prompts** - two section prompts and, when useful, one cover prompt
 
 Do NOT:
 - Include conference events (CFPs, ticket sales)
