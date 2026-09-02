@@ -108,6 +108,13 @@ backend. Use it to discover sources and to recover readable copies when a direct
 page blocks ordinary fetchers. A social post is a lead, never the sole evidence for
 a technical claim.
 
+If `agent-reach` or its reader cannot retrieve a public page because of rendering
+or a simple bot block, use Scrapling as the fallback fetcher. Use it to render or
+extract publicly available pages, then verify the result against the source. Do
+not use it to bypass authentication, paywalls, CAPTCHA challenges or access
+controls. If the page still cannot be read, find an accessible primary or
+independent source instead.
+
 Use `last30days` as a constrained discovery pass after the source sweep. Run a
 small set of focused queries, not a broad firehose: `Scala JVM`, `Kafka distributed
 systems`, `agentic AI in production`, and one timely combined query when the month

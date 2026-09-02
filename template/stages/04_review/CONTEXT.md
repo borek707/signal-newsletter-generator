@@ -16,7 +16,9 @@
 6. **Selection check:** exactly 3 Signals, 3-5 In the Know items, Today 6-8 bullets.
 7. **Scalac angle check:** Debate and Trenches both end with concrete recommendation.
 8. **Date rule check:** no repeated month/year phrases in body.
-9. Produce a fixed draft with inline notes for any unresolved issues.
+9. **Freshness check:** every main item has a freshness tag; no `BACKGROUND_ONLY` item appears as current news.
+10. **Illustration check:** `images.md` contains Debate and Trenches prompts and matches the existing Scalac diagram-comic style.
+11. Produce a fixed draft with inline notes for any unresolved issues.
 
 ## Outputs
 

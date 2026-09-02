@@ -10,13 +10,14 @@
 1. Check every required source listed in `sources.md` (this now includes the Supplementary Research Tools section — `/last30days` and `agent-reach` — not just the newsletter/blog list).
 2. Use Chrome MCP (or WebFetch directly first — try it before assuming a Chrome MCP is needed) for Substack, Medium, and JS-rendered pages.
 3. Run `/last30days` on 1-2 candidate topics early, as a triage signal for what's actually getting engagement (see `sources.md` § Supplementary Research Tools) — don't wait until the deep-dive to discover a topic is dead or alive.
-4. Run `agent-reach doctor --json` once per session; if OpenCLI/X is connected, search X and LinkedIn (via Exa) for each strong candidate from steps 1-3 — real engagement numbers are strong evidence for or against a Debate/Trenches pick.
+4. Run `agent-reach doctor --json` once per session; if OpenCLI/X is connected, search X and LinkedIn (via Exa) for each strong candidate from steps 1-3 — real engagement numbers are strong evidence for or against a Debate/Trenches pick. If its reader cannot retrieve a public page because of rendering or a simple bot block, use Scrapling as fallback. Do not use it to bypass authentication, paywalls, CAPTCHA challenges or access controls.
 5. Extract candidate signals: migrations, postmortems, debates, cost reductions, breaking changes, AI integration.
 6. Fill `research-brief-template.md` sections §1–§11.
 7. Propose at least one Debate candidate, one Trenches candidate, and at least 5 Signal candidates.
 8. List skipped sources and rejected signals with reasons.
-9. Flag any claims needing fact-check verification.
-10. **Competitor check:** before featuring any third-party tool/repo/article by name, cross-check it against the full competitor list in `scalac-tone-of-voice.md` (SoftwareMill, VirtusLab, Typelevel) — not just whichever competitor was flagged in a previous issue's brief. Grep past issues for the exact tool/company name before treating a find as "new" — several July candidates turned out to be duplicates of stories already used in earlier issues.
+9. Give every candidate `NEW_THIS_MONTH`, `MATERIAL_UPDATE` or `BACKGROUND_ONLY`; record its originating event date. Only the first two are eligible for Debate, Trenches or Signal Over Noise.
+10. Flag any claims needing fact-check verification.
+11. **Competitor check:** before featuring any third-party tool/repo/article by name, cross-check it against the full competitor list in `scalac-tone-of-voice.md` (SoftwareMill, VirtusLab, Typelevel) — not just whichever competitor was flagged in a previous issue's brief. Grep past issues for the exact tool/company name before treating a find as "new" — several July candidates turned out to be duplicates of stories already used in earlier issues.
 
 ## Search strategy: five tracks, three query shapes each
 

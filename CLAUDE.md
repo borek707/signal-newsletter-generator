@@ -38,3 +38,27 @@ The original skill reference remains in `SKILL.md` at the root.
 - Every output is an edit surface.
 - Configure the factory (`_config/`), not the product (`output/`).
 - No AI-slop language. No throat-clearers, emphasis crutches, or business jargon.
+
+## Research routing
+
+- Use `agent-reach` for every external lookup, URL and platform query.
+- If its reader cannot retrieve a public page because of rendering or a simple bot
+  block, use Scrapling as a fallback. Never use it to bypass authentication,
+  paywalls, CAPTCHA challenges or access controls.
+- Use `last30days` as a small discovery pass after the source sweep: Scala/JVM,
+  Kafka/distributed systems, agentic AI in production, and one timely combined
+  query. Treat social output as leads, then verify selected claims against primary
+  sources.
+- Give every candidate a freshness tag: `NEW_THIS_MONTH`, `MATERIAL_UPDATE` or
+  `BACKGROUND_ONLY`. Only the first two can lead Debate, Trenches or Signal Over
+  Noise.
+
+## Illustration prompts
+
+In `03_draft`, create `output/images.md` with prompts for Architecture Debate and
+Notes from the Trenches. Add a cover only when one idea unifies the issue. Match
+the existing Scalac diagram-comic style: warm off-white background, rough black
+linework, black sticky figures, red as the only accent and short hand-lettered text
+when it clarifies the lesson. The image explains one system relationship, failure
+mode or decision at a glance. Exclude vendor logos, gradients, photorealism, dense
+dashboards and generic robots.

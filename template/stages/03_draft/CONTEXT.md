@@ -19,11 +19,13 @@ Write the first full draft of the newsletter:
 5. Write exactly 3 Signals: what changed + why it matters + migration path.
 6. Write In the Know and Top Resources with direct links.
 7. Apply The Code format from `voice.md`.
-8. Do not polish here. Get structure, argument, and links right.
+8. Create `output/images.md` with prompts for Architecture Debate and Notes from the Trenches. Add a cover prompt only when one idea unifies the issue. Match the existing Scalac diagram-comic style: warm off-white background, rough black linework, black sticky figures and red as the only accent. Short hand-lettered text is allowed when it explains the lesson.
+9. Do not polish here. Get structure, argument, and links right.
 
 ## Outputs
 
 - `output/draft.md`
+- `output/images.md` — two required section prompts and optional cover prompt.
 
 ## Review gate
 

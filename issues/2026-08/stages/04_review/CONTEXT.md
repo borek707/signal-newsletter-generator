@@ -12,6 +12,9 @@
 2. Claim, status and freshness checks against the linked sources.
 3. Link, tone, duplication and date-rule checks.
 4. A concrete Scalac recommendation in Debate and Trenches.
+5. Freshness tags and the `BACKGROUND_ONLY` boundary.
+6. `images.md` has required Debate and Trenches prompts in the existing Scalac
+   diagram-comic style.
 
 ## Outputs
 
