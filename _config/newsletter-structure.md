@@ -94,15 +94,15 @@ Three items:
 
 ### 10. Footer
 
-Fixed block:
-```markdown
-Scalac is a software house that helps companies build high-throughput distributed systems in Scala, Java, and Rust. We run the SIGNAL newsletter as a filter for what actually matters in our stack.
+SIGNAL is published on the scalac.io blog only. **It is not emailed**, so never write "reply to this email" or anything else that assumes an inbox. Story submissions go to the contact page.
 
-**What is SIGNAL?** A monthly, opinionated newsletter for JVM and Scala teams who run real distributed systems. Each issue has three sections -- Architecture Debate, Notes from the Trenches, Signal Over Noise -- and focuses only on changes and incidents that matter in production, not on hype or vendor marketing.
+Fixed block (matches the live issues #6 and #7):
+```markdown
+**What is SIGNAL?** A monthly, opinionated newsletter for JVM and Scala teams who run real distributed systems. Each issue has three sections: Architecture Debate, Notes from the Trenches, Signal Over Noise, and focuses only on changes and incidents that matter in production, not on hype or vendor marketing.
 
 Scalac builds high-throughput systems in Scala, Java, and Rust; SIGNAL is the filter we wish we had when making our own architecture bets.
 
-**Got a story for SIGNAL?** Reply to this email. We read everything.
+**Got a story for SIGNAL?** [Send it our way.](https://scalac.io/contact-us/) We read every submission.
 ```
 
 ### 11. References

@@ -10,7 +10,7 @@ The original skill reference remains in `SKILL.md` at the root.
 
 ## Target
 
-- **Publication:** SIGNAL newsletter (email + blog).
+- **Publication:** SIGNAL newsletter, published on the scalac.io blog. Not sent by email: no "reply to this email" or other inbox wording.
 - **Reader:** CTO / VP Engineering / Chief Architect.
 - **Goal:** monthly filter for what matters in distributed systems, not news aggregation.
 - **Voice:** independent engineering perspective, short and punchy, metric-driven.

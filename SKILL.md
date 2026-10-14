@@ -626,7 +626,7 @@ Each issue has three sections: Architecture Debate, Notes from the Trenches, and
 
 At Scalac, we build high-throughput distributed systems and agentic AI products in Scala, Java, and Rust. SIGNAL is the filter we wanted when making our own architecture bets.
 
-**Have a story for SIGNAL?** Reply to this email. We read every response.
+**Got a story for SIGNAL?** [Send it our way.](https://scalac.io/contact-us/) We read every submission.
 ```
 Do NOT have two separate blocks describing Scalac and SIGNAL -- merge into one.
 
