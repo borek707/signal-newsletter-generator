@@ -32,7 +32,7 @@ Welcome back. Last month, three systems failed through the mechanism built to pr
 
 - **[A clean Kafka restart deleted fresh data.](https://issues.apache.org/jira/browse/KAFKA-20979)** A truncated index file wasn't fsynced, so after restart new segments looked like they were written in 1970.
 - **[LangChain4j adds a model that only decides.](https://github.com/langchain4j/langchain4j/releases/tag/1.21.0)** `DecisionModel` returns typed answers with probabilities, and an independent test puts numbers on the idea.
-- **[Kafka 4.4.0 is a month late.](https://lists.apache.org/thread/gvl8zgcqskrlhyswjlbbyrcjdcyhklyf)** A team that planned CVE fixes around it learned the project had not committed to a date.
+- **[Kafka 4.4.0 passed its vote five weeks late.](https://lists.apache.org/thread/gvl8zgcqskrlhyswjlbbyrcjdcyhklyf)** A team that planned CVE fixes around it learned the project had not committed to a date.
 - **[Scala 3.9 is the new LTS.](https://www.scala-lang.org/news/3.9/)** Old lazy vals inside your dependencies still call `sun.misc.Unsafe`, and recompiling your own code won't remove them.
 - **[JDK 27 changes your object layout by default.](https://bugs.openjdk.org/browse/JDK-8386990)** Compact headers save heap. Oracle's open ticket lists what they cost.
 - **[A UK flight-data link "recovered" while corruption spread.](https://www.nats.aero/news/nats-publishes-preliminary-report-on-technical-incident-of-8-september/)** A one-millisecond race stopped UK departures for about four and a half hours.
@@ -71,7 +71,7 @@ He checked the segments with `DumpLogSegments`. The records had valid timestamps
 
 This is Maison's analysis of the code, and the fix was merged on that basis; the ticket contains no standalone reproduction. Data loss also needs the restart to beat the metadata flush, so a clean shutdown on its own isn't enough.
 
-**The solution:** fsync index files when shutdown trims them. The fixes landed on the [4.4 branch](https://github.com/apache/kafka/commit/beae700199c7ad805f8d5af53bdb7072cc1928e5) and in [PR #23316](https://github.com/apache/kafka/pull/23316), with fix versions 4.3.2 and 4.4.0. 4.3.2 is at release candidate. Kafka 4.2.2, released at the end of last month, doesn't carry the fix, and no 4.2.x release does yet. A sibling bug, [KAFKA-21000](https://issues.apache.org/jira/browse/KAFKA-21000), covers `.log` files with preallocation enabled. That one throws on restart instead of deleting, and its fix targets 4.5.0.
+**The solution:** fsync index files when shutdown trims them. The fixes landed on the [4.4 branch](https://github.com/apache/kafka/commit/beae700199c7ad805f8d5af53bdb7072cc1928e5) and in [PR #23316](https://github.com/apache/kafka/pull/23316), with fix versions 4.3.2 and 4.4.0. 4.4.0 passed its release vote on 13 October; 4.3.2 is at its fourth release candidate. Kafka 4.2.2, released at the end of last month, doesn't carry the fix, and no 4.2.x release does yet. A sibling bug, [KAFKA-21000](https://issues.apache.org/jira/browse/KAFKA-21000), covers `.log` files with preallocation enabled. That one throws on restart instead of deleting, and its fix targets 4.5.0.
 
 Until you can upgrade, search broker logs after each restart:
 
@@ -81,7 +81,7 @@ grep 'largestRecordTimestamp=0) due to log retention time' /path/to/kafka/logs/s
 
 Maison held deleted files back with `file.delete.delay.ms` long enough to inspect them, which is how he confirmed the records were valid.
 
-**Scalac angle:** Most teams test crash recovery and treat a graceful restart as safe. A rolling upgrade is a sequence of graceful restarts. Put the `grep` above into your post-restart checks, and watch hardest where the host or volume goes down with the broker: the loss depends on the new file length not reaching disk, so a quick process restart on a healthy machine is the least likely place to see it. Upgrade to 4.3.2 or 4.4.0 when they ship, and note the 4.2.x gap if you're pinned there.
+**Scalac angle:** Most teams test crash recovery and treat a graceful restart as safe. A rolling upgrade is a sequence of graceful restarts. Put the `grep` above into your post-restart checks, and watch hardest where the host or volume goes down with the broker: the loss depends on the new file length not reaching disk, so a quick process restart on a healthy machine is the least likely place to see it. Upgrade to 4.4.0, or to 4.3.2 once it ships, and note the 4.2.x gap if you're pinned there.
 
 ---
 
@@ -89,11 +89,11 @@ Maison held deleted files back with `file.delete.delay.ms` long enough to inspec
 
 ### 1. [Kafka 4.4.0 misses its window, and the PMC says there was no date to miss.](https://lists.apache.org/thread/gvl8zgcqskrlhyswjlbbyrcjdcyhklyf)
 
-The [release plan](https://cwiki.apache.org/confluence/spaces/KAFKA/pages/429064575/Release+Plan+4.4.0) said "no earlier than September 9". Three release candidates failed before RC4 [went to vote on 6 October](https://lists.apache.org/thread/yy0gybz2y9b3ylylr5rsdxq4j0xmf222). The vote runs to 12 October. Ericsson engineers wrote to the users list that they had planned their own release for the end of that month around 4.4.0's vulnerability fixes. Matthias J. Sax replied: "As an open source project, we don't have committed release dates." Chia-Ping Tsai suggested shipping 4.3.2 or 4.2.2 instead. On the dev list he named the cause: "We had too many must-have changes in 4.4.0, which caused a serious delay." And separately: "The codebase is large and CVEs are common these days."
+The [release plan](https://cwiki.apache.org/confluence/spaces/KAFKA/pages/429064575/Release+Plan+4.4.0) said "no earlier than September 9". Three release candidates failed before RC4 [went to vote on 6 October](https://lists.apache.org/thread/yy0gybz2y9b3ylylr5rsdxq4j0xmf222). It passed on 13 October with four binding votes. Ericsson engineers wrote to the users list that they had planned their own release for the end of that month around 4.4.0's vulnerability fixes. Matthias J. Sax replied: "As an open source project, we don't have committed release dates." Chia-Ping Tsai suggested shipping 4.3.2 or 4.2.2 instead. On the dev list he named the cause: "We had too many must-have changes in 4.4.0, which caused a serious delay." And separately: "The codebase is large and CVEs are common these days."
 
 Part of that CVE load sits in compression. Luke Chen [told the dev list](https://lists.apache.org/thread/6mlgc3b012hhq2v7gj08pzybltnrj7p8) that snappy-java CVEs can't be fixed with a version bump because upstream isn't responding, and that LZ4 support depends on a fork kept by one person. He thinks Kafka isn't affected by the CVEs he checked, but says he isn't 100% sure. Another contributor disputes that snappy-java is unmaintained; nobody disputed the LZ4 point. Kafka can't drop a codec, because old logs have to stay readable, so [KAFKA-21178](https://issues.apache.org/jira/browse/KAFKA-21178) proposes letting admins disable codecs for new writes.
 
-Don't plan CVE remediation around an unreleased minor. The patch lines are the hedge: 4.2.2 is out and 4.3.2 is at release candidate.
+4.4.0 is through, but the lesson stands: don't plan CVE remediation around an unreleased minor. The patch lines are the hedge: 4.2.2 is out and 4.3.2 is at its fourth release candidate.
 
 ### 2. [Scala 3.9 LTS: the Unsafe warning comes from a jar you didn't compile.](https://www.scala-lang.org/news/3.9/)
 
