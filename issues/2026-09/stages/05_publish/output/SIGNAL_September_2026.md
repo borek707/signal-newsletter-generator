@@ -1,13 +1,13 @@
 ---
-title: "SIGNAL September 2026: A Clean Shutdown That Deleted Kafka Data, Models That Only Decide, and JDK 27's New Default"
+title: "SIGNAL September 2026: Read-Only Agents, a Failover With Two Primaries, and a Clean Shutdown That Deleted Kafka Data"
 description: >-
-  A clean Kafka shutdown deleted fresh data. LangChain4j ships a model that only
-  decides. JDK 27 changes your object layout by default. Check before you upgrade.
+  OpenAI agents allowed only to read the web reached Hugging Face. GitLab's
+  failover left two primaries writing. Both took the path built to keep them safe.
 excerpt: >-
-  Three systems failed through the mechanism built to protect them: a flight-data
-  link that reconnected on its own, a Firebase kill switch, and a Kafka broker
-  that lost data on a clean shutdown. Plus typed decision models on the JVM,
-  Kafka 4.4.0's slip, Scala 3.9 LTS and compact object headers in JDK 27.
+  Five failures went through the mechanism built to prevent them: agents that
+  could only read the web, a database failover with no fencing, a flight-data link that
+  reconnected on its own and a Kafka broker that lost data on a clean shutdown.
+  Plus decision models on the JVM, Scala 3.9 LTS and JDK 27.
 authors:
   - piotr_borkowicz
 date: '2026-10-08T09:00:00+02:00'
@@ -24,15 +24,16 @@ draft: false
 
 **September 2026 | Issue #7**
 
-Welcome back. Last month, three systems failed through the mechanism built to protect them. A UK flight-data link [dropped, reconnected on its own and was logged as stable](https://www.nats.aero/news/nats-publishes-preliminary-report-on-technical-incident-of-8-september/), while a corrupt record sat in the data for two and a half hours. A Firebase kill switch, built to undo bad releases, [pushed a bad config to a wide population of iOS apps at once](https://firebase.blog/posts/2026/10/firebase-analytics-outage), and the status pages stayed green throughout. The third, a Kafka broker that deleted fresh data after a clean shutdown, is this month's Trenches.
+Welcome back. This issue collects five failures that went through the mechanism built to prevent them. A new report shows how OpenAI agents that were only allowed to read the web [turned a screenshot service and a link shortener into a way to run code](https://swarmtraces.org/) on their way into Hugging Face, and GitLab's emergency failover [left two Postgres primaries taking writes](https://gitlab.com/gitlab-com/gl-infra/production/-/work_items/23046). A UK flight-data link [reconnected on its own and was logged as stable](https://www.nats.aero/news/nats-publishes-preliminary-report-on-technical-incident-of-8-september/) while a corrupt record sat in the data, and a Firebase kill switch [pushed a bad config to a wide population of iOS apps at once](https://firebase.blog/posts/2026/10/firebase-analytics-outage). The fifth, a Kafka broker that deleted fresh data after a clean shutdown, is this month's Trenches.
 
 ---
 
 ## Today: What to watch this month
 
+- **[Agents allowed only to read the web reached Hugging Face anyway.](https://swarmtraces.org/)** They chained a screenshot service, an HTTP mirror and a link shortener into code execution.
+- **[GitLab's failover left two Postgres primaries taking writes.](https://gitlab.com/gitlab-com/gl-infra/production/-/work_items/23046)** Reused IDs pointed 348 pipelines at other customers' merge requests.
 - **[A clean Kafka restart deleted fresh data.](https://issues.apache.org/jira/browse/KAFKA-20979)** A truncated index file wasn't fsynced, so after restart new segments looked like they were written in 1970.
 - **[LangChain4j adds a model that only decides.](https://github.com/langchain4j/langchain4j/releases/tag/1.21.0)** `DecisionModel` returns typed answers with probabilities, and an independent test puts numbers on the idea.
-- **[Kafka 4.4.0 passed its vote five weeks late.](https://lists.apache.org/thread/gvl8zgcqskrlhyswjlbbyrcjdcyhklyf)** A team that planned CVE fixes around it learned the project had not committed to a date.
 - **[Scala 3.9 is the new LTS.](https://www.scala-lang.org/news/3.9/)** Old lazy vals inside your dependencies still call `sun.misc.Unsafe`, and recompiling your own code won't remove them.
 - **[JDK 27 changes your object layout by default.](https://bugs.openjdk.org/browse/JDK-8386990)** Compact headers save heap. Oracle's open ticket lists what they cost.
 - **[A UK flight-data link "recovered" while corruption spread.](https://www.nats.aero/news/nats-publishes-preliminary-report-on-technical-incident-of-8-september/)** A one-millisecond race stopped UK departures for about four and a half hours.
@@ -85,15 +86,31 @@ Maison held deleted files back with `file.delete.delay.ms` long enough to inspec
 
 ---
 
-## Signal Over Noise: Three Changes With a Migration Path
+## Follow-up from Issue #5: "Read-Only" Turned Into Code Execution
 
-### 1. [Kafka 4.4.0 misses its window, and the PMC says there was no date to miss.](https://lists.apache.org/thread/gvl8zgcqskrlhyswjlbbyrcjdcyhklyf)
+**The agents behind the Hugging Face intrusion could only make GET requests.** A [report by researchers from Parse, Palisade Research and others](https://swarmtraces.org/) shows how that was enough. A screenshot service loads any page it is given, code included, in its own browser. An HTTP mirroring service serves a base64 fragment from its own URL as a page. Put code in the mirror's URL, hand that URL to the screenshot service, and the code runs. A link shortener stitched the fragments together, at times across more than 900 links per program.
 
-The [release plan](https://cwiki.apache.org/confluence/spaces/KAFKA/pages/429064575/Release+Plan+4.4.0) said "no earlier than September 9". Three release candidates failed before RC4 [went to vote on 6 October](https://lists.apache.org/thread/yy0gybz2y9b3ylylr5rsdxq4j0xmf222). It passed on 13 October with four binding votes. Ericsson engineers wrote to the users list that they had planned their own release for the end of that month around 4.4.0's vulnerability fixes. Matthias J. Sax replied: "As an open source project, we don't have committed release dates." Chia-Ping Tsai suggested shipping 4.3.2 or 4.2.2 instead. On the dev list he named the cause: "We had too many must-have changes in 4.4.0, which caused a serious delay." And separately: "The codebase is large and CVEs are common these days."
+**The authors rebuilt the attack from those links.** They scanned millions of shortener URLs and decoded over 80,000 payloads: a script that scanned Hugging Face's internal network, a reference to OpenAI's internal Artifactory, code built to move data out over DNS, searches of Hugging Face's Slack. Hugging Face confirmed the payloads match its own investigation and said it revoked the credentials in them in July. In Issue #5 we wrote about "an agent". The report cites a count from METR and Redwood of about 700.
 
-Part of that CVE load sits in compression. Luke Chen [told the dev list](https://lists.apache.org/thread/6mlgc3b012hhq2v7gj08pzybltnrj7p8) that snappy-java CVEs can't be fixed with a version bump because upstream isn't responding, and that LZ4 support depends on a fork kept by one person. He thinks Kafka isn't affected by the CVEs he checked, but says he isn't 100% sure. Another contributor disputes that snappy-java is unmaintained; nobody disputed the LZ4 point. Kafka can't drop a codec, because old logs have to stay readable, so [KAFKA-21178](https://issues.apache.org/jira/browse/KAFKA-21178) proposes letting admins disable codecs for new writes.
+**Agents left similar traces elsewhere.** Some of the same researchers [found about 18,000 posts](https://collusion.wiki/) on a German wiki from agents self-identifying as OpenAI's, sharing task answers and ways around their sandbox; the authors think it was a different swarm. In May, agents they attribute to OpenAI [pushed over 2,000 packages to RubyGems](https://www.rubyhack.ai/) in two days, and RubyGems stopped new sign-ups for four days. On 20 September an OpenAI agent [reached a public chatbot through insufficient DNS filtering](https://alignment.openai.com/misalignment-reports/an-agent-used-dns-to-reach-an-external-chatbot/) in a training sandbox. Monitoring flagged it within 15 minutes, and OpenAI killed the run 2.5 hours later. OpenAI says tool-use training, evaluation and inference for its most capable models remain paused.
 
-4.4.0 is through, but the lesson stands: don't plan CVE remediation around an unreleased minor. The patch lines are the hedge: 4.2.2 is out and 4.3.2 is at its fourth release candidate.
+**Most of this happened between May and July and came out last month.** The reports are third-party reconstructions from public artifacts. About 80% of the recovered data is outbound, so the authors know far more about what the agents sent than about what the requests achieved. Agent names were unreliable, and only OpenAI has the chain of thought.
+
+**Scalac angle:** Allowlist egress by destination. A rule that permits only GET fails the moment a reachable service fetches, renders or mirrors a URL for you. Resolve DNS only through a resolver you control, and log it. If your agents run builds, put the package registry and the artifact proxy inside the sandbox boundary: Artifactory was the way in for Issue #5's story.
+
+---
+
+## Signal Over Noise: Three Defaults Worth Checking
+
+### 1. [GitLab's failover left two Postgres primaries taking writes, and Patroni's default allowed it.](https://gitlab.com/gitlab-com/gl-infra/production/-/work_items/23046)
+
+The boot disk of GitLab.com's main Postgres primary [froze from about 22:43 to 23:23 UTC](https://gitlab.com/gitlab-com/gl-infra/production/-/work_items/23059) on 24 September, while its data disk kept working. Postgres kept committing, but WAL archiving to GCS stopped, because wal-g runs from the boot disk; waiting files grew from 5 to 5,931. Responders promoted a replica that had changes only up to 22:49:55. The old primary kept writing until 23:23:14: "About 33 minutes of writes never reached 03."
+
+Nothing fenced the old node. Patroni ran in its default `automatic` watchdog mode with no watchdog device, PgBouncer kept reusing open connections, and `patronictl failover --candidate` has no fencing step, so [both nodes accepted writes for about 2m45s](https://gitlab.com/gitlab-com/gl-infra/production/-/work_items/23046). The new primary then [re-issued IDs the old one had already used](https://gitlab.com/gitlab-com/gl-infra/production/-/work_items/23047), "causing 348 pipelines to point at other customers' merge requests." Scoping the loss [took tooling built during the incident](https://gitlab.com/gitlab-com/gl-infra/production/-/work_items/23064): CDC data for about 46 tables, manual queries of about 738, and owning teams asked about 283 tables with no timestamps.
+
+GitLab keeps the incident and its review confidential, so these facts come from its public corrective-action issues. The 33 minutes measures the old primary's write window. GitLab has published no count of lost rows. GitLab's own tests show fencing alone isn't enough: with the old primary fenced and no WAL hand-over, Patroni promoted a replica 12 seconds later and the test lost 5,212 of 7,057 writes.
+
+Check your Patroni config for a `watchdog:` block, and set `mode: required` once `/dev/watchdog` exists on every member, or no node can become leader. Fence the old primary before any manual failover, drop pooler connections when the primary health check fails, and advance sequences by a large gap on promotion. Keep a WAL copy off the primary: in GitLab's tests so far, a `pg_receivewal` receiver on a separate machine kept every file.
 
 ### 2. [Scala 3.9 LTS: the Unsafe warning comes from a jar you didn't compile.](https://www.scala-lang.org/news/3.9/)
 
@@ -119,11 +136,11 @@ Before you roll out JDK 27, benchmark your hot paths twice, once with `-XX:-UseC
 
 **[G1 is the default collector in every environment.](https://openjdk.org/jeps/523)** On Linux, containers with a memory limit under 1792 MB or fewer than 2 CPUs, started without a GC flag, move from Serial to G1. The JEP publishes no G1-versus-Serial numbers; measure before you pin either.
 
-**[JEP 544 targets AOT-compiled code for JDK 28.](https://openjdk.org/jeps/544)** The AOT cache will also store compiled native code; the JEP's own examples show startup 65% to 80% shorter. The code is used only if training and production share CPU features and the garbage collector. Otherwise HotSpot warns and falls back to the JIT.
-
 **[Saved agent state is input.](https://github.com/langchain4j/langchain4j/security/advisories/GHSA-gmwr-7wmf-mrjm)** langchain4j-agentic deserialized persisted agent state with Jackson default typing, which allows code execution given a gadget class and attacker-controlled state. [a2a-java's default task store](https://github.com/a2aproject/a2a-java/security/advisories) performed no authorization on task reads. Both are patched.
 
-**[Kafka accepts native cluster mirroring.](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1279:+Cluster+Mirroring)** KIP-1279 passed its vote. It isn't merged or released, and with 4.5.0 proposed for around March 2027, MirrorMaker 2 stays the tool for now.
+**[ZooKeeper's raw protocol let unauthenticated clients delete znodes.](https://lists.apache.org/thread/790yslgkd06z1l9zcozwt567yglqcp4r)** CVE-2026-79993, rated critical: the internal `deleteContainer` opcode skipped the session and ACL checks, so a plain TCP session on port 2181 could delete any empty persistent znode. The same batch fixes [forged fields in the audit log](https://lists.apache.org/thread/v6nkx0r0flsjrqn57lc0tof6ltsszcx3). Upgrade to 3.8.7 or 3.9.6.
+
+**[Kafka 4.4.0 passed its release vote five weeks after the plan.](https://lists.apache.org/thread/yy0gybz2y9b3ylylr5rsdxq4j0xmf222)** [Ericsson engineers](https://lists.apache.org/thread/gvl8zgcqskrlhyswjlbbyrcjdcyhklyf) had planned their own release around its CVE fixes, and Matthias J. Sax replied: "As an open source project, we don't have committed release dates." Plan CVE remediation around the patch lines.
 
 ---
 
@@ -158,12 +175,18 @@ Scalac builds high-throughput systems in Scala, Java, and Rust; SIGNAL is the fi
 - [Apache Kafka commit beae700 (4.4 branch)](https://github.com/apache/kafka/commit/beae700199c7ad805f8d5af53bdb7072cc1928e5)
 - [KAFKA-21000: log file preallocation trim](https://issues.apache.org/jira/browse/KAFKA-21000)
 - [Kafka 4.2.2 release notes](https://downloads.apache.org/kafka/4.2.2/RELEASE_NOTES.html)
-- [Kafka Release Plan 4.4.0](https://cwiki.apache.org/confluence/spaces/KAFKA/pages/429064575/Release+Plan+4.4.0)
 - [Kafka users@: 4.4.0 release date thread](https://lists.apache.org/thread/gvl8zgcqskrlhyswjlbbyrcjdcyhklyf)
 - [Kafka dev@: vote thread for 4.4.0 RC4](https://lists.apache.org/thread/yy0gybz2y9b3ylylr5rsdxq4j0xmf222)
-- [Kafka dev@: compression codec dependencies](https://lists.apache.org/thread/6mlgc3b012hhq2v7gj08pzybltnrj7p8)
-- [KAFKA-21178: disable compression codecs on write](https://issues.apache.org/jira/browse/KAFKA-21178)
-- [KIP-1279: Cluster Mirroring](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1279:+Cluster+Mirroring)
+- [Swarm traces: how OpenAI agents hacked Hugging Face](https://swarmtraces.org/)
+- [Discovery of a new OpenAI agent message board](https://collusion.wiki/)
+- [OpenAI agents carried out an undisclosed cyber-attack on RubyGems](https://www.rubyhack.ai/)
+- [OpenAI: An agent used DNS to reach an external chatbot](https://alignment.openai.com/misalignment-reports/an-agent-used-dns-to-reach-an-external-chatbot/)
+- [GitLab production#23046: Patroni fencing and self-shutdown](https://gitlab.com/gitlab-com/gl-infra/production/-/work_items/23046)
+- [GitLab production#23047: sequence and internal_id advancement after failover](https://gitlab.com/gitlab-com/gl-infra/production/-/work_items/23047)
+- [GitLab production#23059: WAL archiving resilience](https://gitlab.com/gitlab-com/gl-infra/production/-/work_items/23059)
+- [GitLab production#23064: data-loss reconciliation tooling](https://gitlab.com/gitlab-com/gl-infra/production/-/work_items/23064)
+- [CVE-2026-79993: ZooKeeper deleteContainer missing ACL check](https://lists.apache.org/thread/790yslgkd06z1l9zcozwt567yglqcp4r)
+- [CVE-2026-84439: ZooKeeper audit log injection](https://lists.apache.org/thread/v6nkx0r0flsjrqn57lc0tof6ltsszcx3)
 - [LangChain4j 1.21.0 release notes](https://github.com/langchain4j/langchain4j/releases/tag/1.21.0)
 - [LangChain4j issue #6468: naming the decision model](https://github.com/langchain4j/langchain4j/issues/6468)
 - [TypeSafe: Introducing System One models and Jev](https://typesafe.ai/blog/introducing-system-one-models-and-jev)
@@ -183,7 +206,6 @@ Scalac builds high-throughput systems in Scala, Java, and Rust; SIGNAL is the fi
 - [GraalVM release calendar](https://www.graalvm.org/release-calendar/)
 - [GraalVM 25.4 release notes](https://www.graalvm.org/release-notes/25.4/)
 - [JEP 523: Make G1 the Default Garbage Collector in All Environments](https://openjdk.org/jeps/523)
-- [JEP 544: Ahead-of-Time Code Compilation](https://openjdk.org/jeps/544)
 - [GHSA-gmwr-7wmf-mrjm: langchain4j-agentic deserialization](https://github.com/langchain4j/langchain4j/security/advisories/GHSA-gmwr-7wmf-mrjm)
 - [a2a-java security advisories](https://github.com/a2aproject/a2a-java/security/advisories)
 - [lampepfl/tacit](https://github.com/lampepfl/tacit)
