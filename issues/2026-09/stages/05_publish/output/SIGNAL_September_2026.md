@@ -10,7 +10,7 @@ excerpt: >-
   Plus decision models on the JVM, Scala 3.9 LTS and JDK 27.
 authors:
   - piotr_borkowicz
-date: '2026-10-08T09:00:00+02:00'
+date: '2026-10-14T16:28:02+02:00'
 tags:
   - scala
   - jvm
